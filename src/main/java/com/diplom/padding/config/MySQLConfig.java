@@ -26,12 +26,12 @@ public class MySQLConfig {
     }
 
     @Bean
-    public DataSource mySQL(@Qualifier("mySQLProperties") DataSourceProperties mySQLProperties) {
+    public DataSource mySQL(@Qualifier("postgreSQLProperties") DataSourceProperties mySQLProperties) {
         return mySQLProperties.initializeDataSourceBuilder().build();
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean mySQLEmFactory(@Qualifier("mySQL") DataSource mySQL, EntityManagerFactoryBuilder builder) {
+    public LocalContainerEntityManagerFactoryBean mySQLEmFactory(@Qualifier("postgreSQL") DataSource mySQL, EntityManagerFactoryBuilder builder) {
         return builder.dataSource(mySQL).packages("com.diplom.padding.entity").build();
     }
 

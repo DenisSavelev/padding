@@ -3,28 +3,33 @@ server:
   address:
 
 spring:
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    properties:
+  postgresql : &postgres
+    jpa:
+      show-sql: true
       hibernate:
-        show_sql: false
-        jdbc.lob.non_contextual_creation: true
-  datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-    tomcat:
-      maxIdle: 10
-      max-active: 5
-      max-wait: 10000
-      validationQuery: select 1
-      removeAbandoned: true
-      removeAbandonedTimeout: 120
-    servlet:
-      multipart:
-        max-file-size: 15MB
-        max-request-size: 15MB
+        ddl-auto: update
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      properties:
+        hibernate:
+          show_sql: false
+          jdbc.lob.non_contextual_creation: true
+    datasource:
+      url: jdbc:postgresql://localhost:5432/postgres
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
+  mysql: &my
+    jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: update
+      database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+      properties:
+        hibernate:
+          show_sql: false
+          jdbc.lob.non_contextual_creation: true
+    datasource:
+      url: jdbc:mysql://localhost:3306/moodle?serverTimezone=UTC&useSSL=true&verifyServerCertificate=false
+      username: root
+      password: qwerty123
+      driver-class-name: com.mysql.jdbc.Driver

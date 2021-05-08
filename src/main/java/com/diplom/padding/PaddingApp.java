@@ -1,21 +1,27 @@
 package com.diplom.padding;
 
 
+import com.diplom.padding.Git.GitApp;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 
 @SpringBootApplication
 public class PaddingApp {
-    public static void main(String[] args) throws GitAPIException {
+    public static void main(String[] args) throws GitAPIException, IOException, URISyntaxException {
         SpringApplication.run(PaddingApp.class, args);
-        Git git = Git.cloneRepository()
-                .setURI("http://192.168.0.104/root/IIE.git")
-                .setDirectory(new File("~/local"))
-                .call();
+        GitApp gitApp = new GitApp();
+        Git git = gitApp.gitClone();
+        gitApp.moveFile("check/TestFile.pdf", "~/local1/TestFile.pdf");
+        //gitApp.teleport();
+        gitApp.gitAdd(git, "TestFile.pdf");
+        gitApp.gitCommit(git);
+        gitApp.gitPush(git);
     }
 }

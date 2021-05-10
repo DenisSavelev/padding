@@ -32,7 +32,7 @@ public class MySQLConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean mySQLEmFactory(@Qualifier("mySQL") DataSource mySQL, EntityManagerFactoryBuilder builder) {
-        return builder.dataSource(mySQL).packages("com.diplom.padding.entity").build();
+        return builder.dataSource(mySQL).packages("com.diplom.padding.entity.moodle").build();
     }
 
     @Bean

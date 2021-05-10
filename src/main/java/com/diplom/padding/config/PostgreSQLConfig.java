@@ -33,6 +33,7 @@ public class PostgreSQLConfig {
     }
 
     @Bean
+    @Primary
     public LocalContainerEntityManagerFactoryBean postgreSQLEmFactory(@Qualifier("postgreSQL") DataSource postgreSQL, EntityManagerFactoryBuilder builder) {
         return builder.dataSource(postgreSQL).packages("com.diplom.padding.entity").build();
     }

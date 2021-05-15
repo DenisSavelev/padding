@@ -60,10 +60,11 @@ public class GitApp{
         }
     }
 
-    public Git gitClone() throws GitAPIException {
+    public Git gitClone(String branch) throws GitAPIException {
         Git git = Git.cloneRepository()
                 .setURI("http://192.168.0.104/root/IIE.git")
-                .setDirectory(new File("~/local1"))
+                .setBranch(branch)
+                .setDirectory(new File("~/local2"))
                 .call();
         return git;
     }
@@ -86,6 +87,12 @@ public class GitApp{
         PushCommand push = git.push();
         push.setCredentialsProvider(new UsernamePasswordCredentialsProvider("root", "root1234"));
         push.call();
+    }
+
+    public void gitMerge(Git git) throws GitAPIException, IOException, URISyntaxException {
+        ObjectId objectId = git.getRepository().resolve("origin/branch3");
+        git.merge().include(objectId).call();
+        gitPush(git);
     }
 
 }

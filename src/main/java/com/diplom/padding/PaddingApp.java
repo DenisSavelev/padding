@@ -18,10 +18,17 @@ public class PaddingApp {
         SpringApplication.run(PaddingApp.class, args);
         GitApp gitApp = new GitApp();
         Git git = gitApp.gitClone();
-        gitApp.moveFile("check/TestFile.pdf", "~/local1/TestFile.pdf");
-        //gitApp.teleport();
-        gitApp.gitAdd(git, "TestFile.pdf");
-        gitApp.gitCommit(git);
+        gitApp.createRepo(git.getRepository().getDirectory());
         gitApp.gitPush(git);
+        /*Git git = gitApp.gitClone();
+        gitApp.moveFile("check/TestFile.pdf", "~/local1/TestFile.pdf");*/
+
+
+
+
+        //gitApp.teleport();
+        /*gitApp.gitAdd(git, "TestFile.pdf");
+        gitApp.gitCommit(git);
+        gitApp.gitPush(git);*/
     }
 }

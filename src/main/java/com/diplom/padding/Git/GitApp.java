@@ -21,11 +21,23 @@ public class GitApp{
     int i = 1;
 
 
-    public void createRepo() throws IOException {
-        Repository newlyCreatedRepo = FileRepositoryBuilder.create(
-                new File("~/new_repo/.git"));
-        newlyCreatedRepo.create();
+    public void createRepo(File src) throws IOException, GitAPIException {
+        Repository repo = new FileRepositoryBuilder().readEnvironment().findGitDir(src).build();
+        Git git = new Git(repo);
+        CreateBranchCommand bcc = git.branchCreate();
+        CheckoutCommand checkout = git.checkout();
+        String branchName = "branch" + (int) (Math.random() * 100);
+        bcc.setName(branchName)
+                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM)
+                .setForce(true)
+                .call();
+        checkout.setName(branchName).call();
+
     }
+
+
+
+
 
     public Repository openRepo() throws IOException {
     Repository existingRepo = new FileRepositoryBuilder()
@@ -61,9 +73,10 @@ public class GitApp{
     }
     public void gitCommit(Git git) throws GitAPIException {
         CommitCommand commit = git.commit();
-        i = i++;
+        i = i+1;
         commit.setMessage("commit-"+i).call();
     }
+
     public void gitPush(Git git) throws GitAPIException, IOException, URISyntaxException {
         RemoteAddCommand remoteAddCommand = git.remoteAdd();
         remoteAddCommand.setName("origin");

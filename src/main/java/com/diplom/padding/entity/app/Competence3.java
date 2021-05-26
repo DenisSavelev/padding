@@ -1,0 +1,55 @@
+package com.diplom.padding.entity.app;
+
+import javax.persistence.*;
+
+@Entity
+public class Competence3 {
+    @Id
+    private Long id;
+    private String shortname;
+    private String description;
+    @ManyToOne
+    private Competence2 competence2;
+
+    public Competence3() {
+    }
+
+    public Competence3(Long id, String shortname, String description, Competence2 competence2) {
+        this.id = id;
+        this.shortname = shortname;
+        this.description = description;
+        this.competence2 = competence2;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getShortname() {
+        return shortname;
+    }
+
+    public void setShortname(String shortname) {
+        this.shortname = shortname;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Competence2 getCompetence2() {
+        return competence2;
+    }
+
+    public void setCompetence2(Competence2 competence2) {
+        this.competence2 = competence2;
+    }
+}

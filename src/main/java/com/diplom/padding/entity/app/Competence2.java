@@ -1,5 +1,7 @@
 package com.diplom.padding.entity.app;
 
+import com.diplom.padding.entity.moodle.CompetenceMoodle2;
+
 import javax.persistence.*;
 
 @Entity
@@ -18,6 +20,13 @@ public class Competence2 {
         this.id = id;
         this.shortname = shortname;
         this.description = description;
+        this.competence = competence;
+    }
+
+    public Competence2(CompetenceMoodle2 competenceMoodle2, Competence competence) {
+        this.id = competenceMoodle2.getId();
+        this.shortname = competenceMoodle2.getShortname();
+        this.description = competenceMoodle2.getDescription();
         this.competence = competence;
     }
 

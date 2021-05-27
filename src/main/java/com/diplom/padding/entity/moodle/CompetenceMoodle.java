@@ -1,28 +1,24 @@
-package com.diplom.padding.entity.app;
+package com.diplom.padding.entity.moodle;
 
-import com.diplom.padding.entity.moodle.CompetenceMoodle;
 import javax.persistence.*;
 
 @Entity
-public class Competence {
+@Table(name = "competency_framework")
+public class CompetenceMoodle {
     @Id
     private Long id;
+    @Column(name = "shortname")
     private String shortname;
+    @Column(name = "description")
     private String description;
 
-    public Competence() {
+    public CompetenceMoodle() {
     }
 
-    public Competence(Long id, String shortname, String description) {
+    public CompetenceMoodle(Long id, String shortname, String description) {
         this.id = id;
         this.shortname = shortname;
         this.description = description;
-    }
-
-    public Competence(CompetenceMoodle competenceMoodle) {
-        this.id = competenceMoodle.getId();
-        this.shortname = competenceMoodle.getShortname();
-        this.description = competenceMoodle.getDescription();
     }
 
     public Long getId() {

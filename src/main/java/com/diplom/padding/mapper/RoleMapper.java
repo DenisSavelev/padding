@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class RoleMapper {
     public Role toApp(RoleMoodle roleMoodle) {
-        return new Role(Math.toIntExact(roleMoodle.getId()), roleMoodle.getName());
+        return new Role(roleMoodle);
     }
 }

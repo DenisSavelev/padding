@@ -1,5 +1,6 @@
 package com.diplom.padding.entity.app;
 
+import com.diplom.padding.entity.moodle.RoleMoodle;
 import javax.persistence.*;
 
 @Entity
@@ -14,6 +15,11 @@ public class Role {
     public Role(Integer id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Role(RoleMoodle roleMoodle) {
+        this.id = Math.toIntExact(roleMoodle.getId());
+        this.name = roleMoodle.getName();
     }
 
     public Integer getId() {

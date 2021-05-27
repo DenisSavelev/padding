@@ -1,5 +1,6 @@
 package com.diplom.padding.entity.app;
 
+import com.diplom.padding.entity.moodle.CourseMoodle;
 import javax.persistence.*;
 
 @Entity
@@ -16,6 +17,12 @@ public class Course {
         this.id = id;
         this.fullName = fullName;
         this.shortName = shortName;
+    }
+    
+    public Course(CourseMoodle courseMoodle) {
+        this.id = courseMoodle.getId();
+        this.fullName = courseMoodle.getFullName();
+        this.shortName = courseMoodle.getShortName();
     }
 
     public Long getId() {

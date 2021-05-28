@@ -1,5 +1,6 @@
-package com.diplom.padding.dao;
+package com.diplom.padding.dao.impl;
 
+import com.diplom.padding.dao.RoleDAO;
 import org.springframework.stereotype.Repository;
 import com.diplom.padding.entity.moodle.RoleMoodle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import com.diplom.padding.repositories.moodle.RoleMoodleRepository;
 import java.util.List;
 
 @Repository
-public class RoleDAOImpl implements RoleDAO{
+public class RoleDAOImpl implements RoleDAO {
     private final RoleMoodleRepository repository;
 
     @Autowired

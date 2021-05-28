@@ -1,33 +1,33 @@
-package com.diplom.padding.entity.app;
+package com.diplom.padding.entity.moodle;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-public class Task {
+@Table(name = "grade_items")
+public class TaskMoodle {
     @Id
     private Long id;
+    @Column(name = "itemname")
     private String name;
+    @Column(name = "grademax")
     private Float maxRating;
+    @Column(name = "grademin")
     private Float minRating;
-    @ManyToOne
-    private Level level;
-    @ManyToOne
-    private Course course;
-    @ManyToMany
-    List<Competence> competences;
+    @Column(name = "courseid")
+    private Long idCourse;
+    @Column(name = "itemmodule")
+    private String level;
 
-    public Task() {
+    public TaskMoodle() {
     }
 
-    public Task(Long id, String name, Float maxRating, Float minRating, Level level, Course course, List<Competence> competences) {
+    public TaskMoodle(Long id, String name, Float maxRating, Float minRating, Long idCourse, String level) {
         this.id = id;
         this.name = name;
         this.maxRating = maxRating;
         this.minRating = minRating;
+        this.idCourse = idCourse;
         this.level = level;
-        this.course = course;
-        this.competences = competences;
     }
 
     public Long getId() {
@@ -62,27 +62,19 @@ public class Task {
         this.minRating = minRating;
     }
 
-    public Level getLevel() {
+    public Long getIdCourse() {
+        return idCourse;
+    }
+
+    public void setIdCourse(Long idCourse) {
+        this.idCourse = idCourse;
+    }
+
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(Level level) {
+    public void setLevel(String level) {
         this.level = level;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-
-    public List<Competence> getCompetences() {
-        return competences;
-    }
-
-    public void setCompetences(List<Competence> competences) {
-        this.competences = competences;
     }
 }

@@ -36,4 +36,17 @@ public class GitController {
         return new ResponseEntity<>( HttpStatus.OK);
     }
 
+    @PostMapping(value="/merge")
+    public @ResponseBody
+    ResponseEntity<String> initMerge(HttpServletRequest request, GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
+        gitApp.gitMerge(gitModel);
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
+
+    @PostMapping(value="/delete")
+    public @ResponseBody
+    ResponseEntity<String> deleteBranch(HttpServletRequest request, GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
+        gitApp.deleteBranch(gitModel);
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
 }

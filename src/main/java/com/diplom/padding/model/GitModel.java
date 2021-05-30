@@ -4,14 +4,24 @@ public class GitModel {
     private String userName;
     private String discipline;
     private String taskName;
+    private int score; //5,4,3 оценка 0 не зачтено/1 зачтено
 
     public GitModel() {
     }
 
-    public GitModel(String userName, String discipline, String taskName) {
+    public GitModel(String userName, String discipline, String taskName, int score) {
         this.userName = userName;
         this.discipline = discipline;
         this.taskName = taskName;
+        this.score = score;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public String getTaskName() {

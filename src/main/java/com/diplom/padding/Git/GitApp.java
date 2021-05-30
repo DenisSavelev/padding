@@ -16,5 +16,6 @@ public interface GitApp {
     void gitAdd(Git git, String to) throws GitAPIException;
     void gitCommit(Git git) throws GitAPIException;
     void gitPush(Git git, String nameDiscipline) throws GitAPIException, URISyntaxException;
-    void gitMerge(Git git) throws GitAPIException, IOException, URISyntaxException;
+    void gitMerge(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException;
+    void deleteBranch( GitModel gitModel) throws GitAPIException, URISyntaxException;
 }

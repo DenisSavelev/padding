@@ -9,6 +9,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.ketch.RemoteGitReplica;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
+
 @Service
 public class GitAppImpl implements GitApp {
     int i = 1;
@@ -58,11 +61,11 @@ public class GitAppImpl implements GitApp {
     public Git gitClone(GitModel gitModel, MultipartFile src) throws GitAPIException, IOException, URISyntaxException {
         String dest = "~/local";
         Git git = Git.cloneRepository()
-                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline()+".git")//дописать имя репозитоиря соответсвующего дисциплине после root/IIE.git
+                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")//дописать имя репозитоиря соответсвующего дисциплине после root/IIE.git
                 .setBranch("master")//gitModel.getTaskName()+"/"+gitModel.getUserName()
                 .setDirectory(new File(dest))
                 .call();
-        String branch = gitModel.getTaskName()+"/"+gitModel.getUserName().replaceAll(" ", "");
+        String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
         createBranch(git, branch);
         Path to = Paths.get(dest+"/"+src.getOriginalFilename());
         src.transferTo(to);
@@ -85,17 +88,39 @@ public class GitAppImpl implements GitApp {
     public void gitPush(Git git, String nameDiscipline) throws GitAPIException, URISyntaxException {
         RemoteAddCommand remoteAddCommand = git.remoteAdd();
         remoteAddCommand.setName("origin");
-        remoteAddCommand.setUri(new URIish("http://192.168.0.104/root/IIE.git")); //дописать имя репозитоиря соответсвующего дисциплине
+        remoteAddCommand.setUri(new URIish("http://192.168.0.104/root/"+ nameDiscipline + ".git")); //дописать имя репозитоиря соответсвующего дисциплине
         remoteAddCommand.call();
         PushCommand push = git.push();
         push.setCredentialsProvider(new UsernamePasswordCredentialsProvider("root", "root1234"));
         push.call();
     }
 
-    public void gitMerge(Git git) throws GitAPIException, IOException, URISyntaxException {
-        ObjectId objectId = git.getRepository().resolve("origin/branch3");
-        git.merge().include(objectId).call();
-        //gitPush(git);
+    public void deleteBranch(GitModel gitModel) throws GitAPIException, URISyntaxException {
+        String dest = "~/local";
+        String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
+        Git git = Git.cloneRepository()
+                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")//дописать имя репозитоиря соответсвующего дисциплине после root/IIE.git
+                .setBranch("master")//gitModel.getTaskName()+"/"+gitModel.getUserName()
+                .setDirectory(new File(dest))
+                .call();
+        RefSpec refSpec = new RefSpec()
+                .setSource(null)
+                .setDestination("refs/heads/"+branch);
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider("root", "root1234")).setRefSpecs(refSpec).setRemote("origin").call();
+    }
+
+    public void gitMerge(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
+        String dest = "~/local";
+        String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
+        Git git = Git.cloneRepository()
+                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")//дописать имя репозитоиря соответсвующего дисциплине после root/IIE.git
+                .setBranch("master")//gitModel.getTaskName()+"/"+gitModel.getUserName()
+                .setDirectory(new File(dest))
+                .call();
+        ObjectId objectId = git.getRepository().resolve("origin/"+ branch);
+        git.merge().setCommit(true).include(objectId).call();
+        //deleteBranch(git, gitModel);
+        gitPush(git, gitModel.getDiscipline());
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {

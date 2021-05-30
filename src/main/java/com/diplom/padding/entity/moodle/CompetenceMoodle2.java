@@ -18,10 +18,6 @@ public class CompetenceMoodle2 {
     @Column(name = "timemodified")
     private Long modified;
 
-    public CompetenceMoodle2() {
-
-    }
-
     public Long getId() {
         return id;
     }

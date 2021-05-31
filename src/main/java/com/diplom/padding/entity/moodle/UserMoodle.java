@@ -1,43 +1,26 @@
-package com.diplom.padding.entity.app;
-
-import com.diplom.padding.entity.moodle.UserMoodle;
+package com.diplom.padding.entity.moodle;
 
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "public")
-public class User {
+@Table(name = "user")
+public class UserMoodle {
     @Id
     private Long id;
+    @Column(name = "lastname")
     private String surname;
+    @Column(name = "firstname")
     private String name;
+    @Column(name = "middlename")
     private String patronymic;
+    @Column(name = "username")
     private String login;
+    @Column(name = "password")
     private String password;
+    @Column(name = "email")
     private String email;
-
-    public User() {
-    }
-
-    public User(Long id, String surname, String name, String patronymic, String login, String password, String email) {
-        this.id = id;
-        this.surname = surname;
-        this.name = name;
-        this.patronymic = patronymic;
-        this.login = login;
-        this.password = password;
-        this.email = email;
-    }
-
-    public User(UserMoodle userMoodle) {
-        this.id = userMoodle.getId();
-        this.surname = userMoodle.getSurname();
-        this.name = userMoodle.getName();
-        this.patronymic = userMoodle.getPatronymic();
-        this.login = userMoodle.getLogin();
-        this.password = userMoodle.getPassword();
-        this.email = userMoodle.getEmail();
-    }
+    @Column(name = "timemodified")
+    private Long modified;
 
     public Long getId() {
         return id;
@@ -93,5 +76,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Long getModified() {
+        return modified;
+    }
+
+    public void setModified(Long modified) {
+        this.modified = modified;
     }
 }

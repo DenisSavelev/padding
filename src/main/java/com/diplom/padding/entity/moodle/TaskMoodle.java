@@ -17,6 +17,8 @@ public class TaskMoodle {
     private Long idCourse;
     @Column(name = "itemmodule")
     private String level;
+    @Column(name = "iteminstance")
+    private Long idItem;
     @Column(name = "timemodified")
     private Long modified;
 
@@ -42,6 +44,10 @@ public class TaskMoodle {
 
     public String getLevel() {
         return level;
+    }
+
+    public Long getIdItem() {
+        return idItem;
     }
 
     public Long getModified() {

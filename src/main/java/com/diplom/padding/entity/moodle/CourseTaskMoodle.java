@@ -3,6 +3,7 @@ package com.diplom.padding.entity.moodle;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "course_modules")
 public class CourseTaskMoodle {
     @Id
     private Long id;

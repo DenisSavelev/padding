@@ -11,17 +11,19 @@ public class User {
     private String name;
     private String patronymic;
     private String login;
+    private String password;
     private String email;
 
     public User() {
     }
 
-    public User(Long id, String surname, String name, String patronymic, String login, String email) {
+    public User(Long id, String surname, String name, String patronymic, String login, String password, String email) {
         this.id = id;
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
         this.login = login;
+        this.password = password;
         this.email = email;
     }
 
@@ -63,6 +65,14 @@ public class User {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {

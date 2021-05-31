@@ -37,8 +37,4 @@ public class CompetenceMoodle2 {
     public Long getIdParent() {
         return idParent;
     }
-
-    public Long getModified() {
-        return modified;
-    }
 }

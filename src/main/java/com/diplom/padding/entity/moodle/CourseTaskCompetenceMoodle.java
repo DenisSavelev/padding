@@ -25,8 +25,4 @@ public class CourseTaskCompetenceMoodle {
     public Long getIdCompetence() {
         return idCompetence;
     }
-
-    public Long getModified() {
-        return modified;
-    }
 }

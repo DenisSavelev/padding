@@ -25,8 +25,4 @@ public class CourseMoodle {
     public String getShortName() {
         return shortName;
     }
-
-    public Long getModified() {
-        return modified;
-    }
 }

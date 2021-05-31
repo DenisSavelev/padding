@@ -49,8 +49,4 @@ public class TaskMoodle {
     public Long getIdItem() {
         return idItem;
     }
-
-    public Long getModified() {
-        return modified;
-    }
 }

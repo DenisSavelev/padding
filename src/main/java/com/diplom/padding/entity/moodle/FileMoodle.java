@@ -31,8 +31,4 @@ public class FileMoodle {
     public Long getIdUser() {
         return idUser;
     }
-
-    public Long getModified() {
-        return modified;
-    }
 }

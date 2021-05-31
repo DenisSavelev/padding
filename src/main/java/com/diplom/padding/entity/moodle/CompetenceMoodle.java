@@ -22,11 +22,11 @@ public class CompetenceMoodle {
         return shortname;
     }
 
-    public String getDescription() {
-        return description;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Long getModified() {
-        return modified;
+    public String getDescription() {
+        return description;
     }
 }

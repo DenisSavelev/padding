@@ -25,8 +25,4 @@ public class CourseTaskMoodle {
     public Long getIdTask() {
         return idTask;
     }
-
-    public Long getModified() {
-        return modified;
-    }
 }

@@ -31,6 +31,11 @@ public class Competence2DAOImpl implements Competence2DAO {
     }
 
     @Override
+    public Optional<Competence3> getCompetence3ById(Long id) {
+        return repositoryApp2.findById(id);
+    }
+
+    @Override
     public List<Competence2> saveAllCompetence2(List<Competence2> competences) {
         return repositoryApp.saveAll(competences);
     }

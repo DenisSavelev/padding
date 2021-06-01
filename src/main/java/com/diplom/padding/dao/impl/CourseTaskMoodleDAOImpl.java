@@ -7,6 +7,7 @@ import com.diplom.padding.entity.moodle.CourseTaskMoodle;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
+import java.util.List;
 
 @Repository
 public class CourseTaskMoodleDAOImpl implements CourseTaskMoodleDAO {
@@ -18,12 +19,17 @@ public class CourseTaskMoodleDAOImpl implements CourseTaskMoodleDAO {
     }
 
     @Override
-    public CourseTaskMoodle getByIdTaskAndIdCourse(Long idTask, Long idCourse) {
+    public List<Long> getIdByIdTaskAndIdCourse(Long idTask, Long idCourse) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<CourseTaskMoodle> cq = cb.createQuery(CourseTaskMoodle.class);
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<CourseTaskMoodle> root = cq.from(CourseTaskMoodle.class);
-        cq.where(cb.and(cb.equal(root.get("idTask"), idTask), cb.equal(root.get("idCourse"), idCourse)));
-        TypedQuery<CourseTaskMoodle> tq = em.createQuery(cq);
-        return tq.getSingleResult();
+        Predicate predicate = cb.conjunction();
+        Predicate area = cb.and(cb.equal(root.get("idTask"), idTask), cb.equal(root.get("idCourse"), idCourse));
+        predicate = cb.and(predicate, area);
+        Predicate area1 = cb.and(cb.equal(root.get("module"), 1L), cb.equal(root.get("module"), 17L));
+        predicate = cb.and(predicate, area1);
+        cq.select(root.get("id")).where(predicate);
+        TypedQuery<Long> tq = em.createQuery(cq);
+        return tq.getResultList();
     }
 }

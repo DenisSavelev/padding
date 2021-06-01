@@ -1,7 +1,7 @@
 package com.diplom.padding.dao;
 
-import com.diplom.padding.entity.moodle.CourseTaskMoodle;
+import java.util.List;
 
 public interface CourseTaskMoodleDAO {
-    CourseTaskMoodle getByIdTaskAndIdCourse(Long idTask, Long idCourse);
+    List<Long> getIdByIdTaskAndIdCourse(Long idTask, Long idCourse);
 }

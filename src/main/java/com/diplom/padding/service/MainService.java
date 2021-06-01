@@ -18,6 +18,7 @@ public class MainService {
     private final CompetenceDAO competenceDAO;
     private final Competence2DAO competence2DAO;
     private final CourseTaskMoodleDAO courseTaskMoodleDAO;
+    private final CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO;
 
     /*@Scheduled(fixedDelay = 3600000)
     public void exportData() {
@@ -28,7 +29,9 @@ public class MainService {
 
     @Autowired
     public MainService(RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, CourseDAO courseDAO,
-                       CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO courseTaskMoodleDAO) {
+                       CompetenceDAO competenceDAO, Competence2DAO competence2DAO,
+                       CourseTaskMoodleDAO courseTaskMoodleDAO,
+                       CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
@@ -36,6 +39,7 @@ public class MainService {
         this.competenceDAO = competenceDAO;
         this.competence2DAO = competence2DAO;
         this.courseTaskMoodleDAO = courseTaskMoodleDAO;
+        this.courseTaskCompetenceMoodleDAO = courseTaskCompetenceMoodleDAO;
     }
 
     @PostConstruct
@@ -77,10 +81,15 @@ public class MainService {
         competence2DAO.saveAllCompetence3(competences3);
 
         List<Task> tasks = new ArrayList<>();
-        taskDAO.findAll().forEach(taskMoodle -> {
-            CourseTaskMoodle courseTaskMoodle = courseTaskMoodleDAO.getByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getIdCourse());
-            tasks.add(new Task());
-        });
+        taskDAO.findAll().forEach(taskMoodle -> courseTaskMoodleDAO.getIdByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getIdCourse()).forEach(cmid -> {
+            List<Competence2> competence2s = new ArrayList<>();
+            List<Competence3> competence3s = new ArrayList<>();
+            courseTaskCompetenceMoodleDAO.getCompetenceByIdCourseTask(cmid).forEach(id -> {
+                competence2DAO.getCompetence2ById(id).ifPresent(competence2s::add);
+                competence2DAO.getCompetence3ById(id).ifPresent(competence3s::add);
+            });
+            tasks.add(new Task(taskMoodle, courseDAO.getById(taskMoodle.getIdCourse()).orElseThrow(), competence2s, competence3s));
+        }));
         taskDAO.saveAll(tasks);
     }
 

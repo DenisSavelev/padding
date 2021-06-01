@@ -11,6 +11,8 @@ public class CourseTaskMoodle {
     private Long idCourse;
     @Column(name = "instance")
     private Long idTask;
+    @Column(name = "module")
+    private Long module;
     @Column(name = "added")
     private Long added;
 

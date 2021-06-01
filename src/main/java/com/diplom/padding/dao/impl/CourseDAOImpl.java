@@ -10,6 +10,7 @@ import com.diplom.padding.repositories.app.CourseRepository;
 import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CourseDAOImpl implements CourseDAO {
@@ -20,6 +21,11 @@ public class CourseDAOImpl implements CourseDAO {
     public CourseDAOImpl(CourseRepository repositoryApp, @Qualifier("mySQLEntityManager") EntityManager entityManager) {
         this.repositoryApp = repositoryApp;
         this.entityManager = entityManager;
+    }
+
+    @Override
+    public Optional<Course> getById(Long id) {
+        return repositoryApp.findById(id);
     }
 
     @Override

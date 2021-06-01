@@ -2,23 +2,24 @@ package com.diplom.padding.dao.impl;
 
 import com.diplom.padding.dao.CourseDAO;
 import com.diplom.padding.entity.app.Course;
-import com.diplom.padding.entity.moodle.CourseMoodle;
 import org.springframework.stereotype.Repository;
+import com.diplom.padding.entity.moodle.CourseMoodle;
+import org.springframework.beans.factory.annotation.*;
 import com.diplom.padding.repositories.app.CourseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.diplom.padding.repositories.moodle.CourseMoodleRepository;
 
+import javax.persistence.*;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @Repository
 public class CourseDAOImpl implements CourseDAO {
     private final CourseRepository repositoryApp;
-    private final CourseMoodleRepository repositoryMoodle;
+    private final EntityManager entityManager;
 
     @Autowired
-    public CourseDAOImpl(CourseRepository repositoryApp, CourseMoodleRepository repositoryMoodle) {
+    public CourseDAOImpl(CourseRepository repositoryApp, @Qualifier("mySQLEntityManager") EntityManager entityManager) {
         this.repositoryApp = repositoryApp;
-        this.repositoryMoodle = repositoryMoodle;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -28,6 +29,10 @@ public class CourseDAOImpl implements CourseDAO {
 
     @Override
     public List<CourseMoodle> findAll() {
-        return repositoryMoodle.findAll();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<CourseMoodle> cq = cb.createQuery(CourseMoodle.class);
+        Root<CourseMoodle> root = cq.from(CourseMoodle.class);
+        cq.where(cb.greaterThan(root.get("id"), 1L));
+        return entityManager.createQuery(cq).getResultList();
     }
 }

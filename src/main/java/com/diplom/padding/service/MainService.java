@@ -17,6 +17,7 @@ public class MainService {
     private final CourseDAO courseDAO;
     private final CompetenceDAO competenceDAO;
     private final Competence2DAO competence2DAO;
+    private final CourseTaskMoodleDAO courseTaskMoodleDAO;
 
     /*@Scheduled(fixedDelay = 3600000)
     public void exportData() {
@@ -27,13 +28,14 @@ public class MainService {
 
     @Autowired
     public MainService(RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, CourseDAO courseDAO,
-                       CompetenceDAO competenceDAO, Competence2DAO competence2DAO) {
+                       CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO courseTaskMoodleDAO) {
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
         this.courseDAO = courseDAO;
         this.competenceDAO = competenceDAO;
         this.competence2DAO = competence2DAO;
+        this.courseTaskMoodleDAO = courseTaskMoodleDAO;
     }
 
     @PostConstruct
@@ -70,17 +72,24 @@ public class MainService {
         List<CompetenceMoodle2> competenceMs3 = competence2DAO.findAllCompetence3();
         competenceMs3.forEach(competenceM3 -> {
             competenceM3.setDescription(parse(competenceM3.getDescription()));
-            competences3.add(new Competence3(competenceM3, competence2DAO.getCompetence2ById(competenceM3.getIdCompetence()).orElseThrow()));
+            competences3.add(new Competence3(competenceM3, competence2DAO.getCompetence2ById(competenceM3.getIdParent()).orElseThrow()));
         });
         competence2DAO.saveAllCompetence3(competences3);
 
         List<Task> tasks = new ArrayList<>();
-        taskDAO.findAll().forEach(taskMoodle -> tasks.add(new Task()));
+        taskDAO.findAll().forEach(taskMoodle -> {
+            CourseTaskMoodle courseTaskMoodle = courseTaskMoodleDAO.getByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getIdCourse());
+            tasks.add(new Task());
+        });
         taskDAO.saveAll(tasks);
     }
 
     private String parse(String description) {
-        description = description.split(";\">")[1];
-        return description.split("<br")[0];
+        try {
+            description = description.split(";\">")[1];
+            return description.split("<br")[0];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return description;
+        }
     }
 }

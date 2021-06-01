@@ -4,9 +4,8 @@ import com.diplom.padding.entity.app.*;
 import com.diplom.padding.repositories.app.*;
 import com.diplom.padding.dao.Competence2DAO;
 import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.*;
 import com.diplom.padding.entity.moodle.CompetenceMoodle2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
@@ -14,16 +13,16 @@ import java.util.*;
 
 @Repository
 public class Competence2DAOImpl implements Competence2DAO {
+    private final EntityManager em;
     private final Competence2Repository repositoryApp;
     private final Competence3Repository repositoryApp2;
-    private final LocalContainerEntityManagerFactoryBean lem;
 
     @Autowired
-    public Competence2DAOImpl(Competence2Repository repositoryApp, Competence3Repository repositoryApp2,
-                              LocalContainerEntityManagerFactoryBean lem) {
+    public Competence2DAOImpl(@Qualifier("mySQLEntityManager") EntityManager em, Competence2Repository repositoryApp,
+                              Competence3Repository repositoryApp2) {
+        this.em = em;
         this.repositoryApp = repositoryApp;
         this.repositoryApp2 = repositoryApp2;
-        this.lem = lem;
     }
 
     @Override
@@ -52,7 +51,6 @@ public class Competence2DAOImpl implements Competence2DAO {
     }
 
     private List<CompetenceMoodle2> getCompetenceByLevel(boolean isTwo) {
-        EntityManager em = lem.createNativeEntityManager(lem.getJpaPropertyMap());
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<CompetenceMoodle2> cq = cb.createQuery(CompetenceMoodle2.class);
         Root<CompetenceMoodle2> root = cq.from(CompetenceMoodle2.class);

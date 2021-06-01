@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.diplom.padding.repositories.app.CompetenceRepository;
 import com.diplom.padding.repositories.moodle.CompetenceMoodleRepository;
 
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class CompetenceDAOImpl implements CompetenceDAO {
@@ -21,6 +21,10 @@ public class CompetenceDAOImpl implements CompetenceDAO {
         this.repositoryMoodle = repositoryMoodle;
     }
 
+    @Override
+    public Optional<Competence> getById(Long id) {
+        return repositoryApp.findById(id);
+    }
 
     @Override
     public List<Competence> saveAll(List<Competence> competences) {

@@ -4,11 +4,9 @@ import com.diplom.padding.dao.*;
 import com.diplom.padding.entity.app.*;
 import com.diplom.padding.entity.moodle.*;
 import org.springframework.stereotype.Service;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -17,6 +15,7 @@ public class MainService {
     private final UserDAO userDAO;
     private final CourseDAO courseDAO;
     private final CompetenceDAO competenceDAO;
+    private final Competence2DAO competence2DAO;
 
     /*@Scheduled(fixedDelay = 3600000)
     public void exportData() {
@@ -26,11 +25,13 @@ public class MainService {
     }*/
 
     @Autowired
-    public MainService(RoleDAO roleDAO, UserDAO userDAO, CourseDAO courseDAO, CompetenceDAO competenceDAO) {
+    public MainService(RoleDAO roleDAO, UserDAO userDAO, CourseDAO courseDAO, CompetenceDAO competenceDAO,
+                       Competence2DAO competence2DAO) {
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
         this.courseDAO = courseDAO;
         this.competenceDAO = competenceDAO;
+        this.competence2DAO = competence2DAO;
     }
 
     @PostConstruct
@@ -54,6 +55,22 @@ public class MainService {
             competences.add(new Competence(competenceM));
         });
         competenceDAO.saveAll(competences);
+
+        List<Competence2> competences2 = new ArrayList<>();
+        List<CompetenceMoodle2> competenceMs2 = competence2DAO.findAllCompetence2();
+        competenceMs2.forEach(competenceM2 -> {
+            competenceM2.setDescription(parse(competenceM2.getDescription()));
+            competences2.add(new Competence2(competenceM2, competenceDAO.getById(competenceM2.getIdCompetence()).orElseThrow()));
+        });
+        competence2DAO.saveAllCompetence2(competences2);
+
+        List<Competence3> competences3 = new ArrayList<>();
+        List<CompetenceMoodle2> competenceMs3 = competence2DAO.findAllCompetence3();
+        competenceMs3.forEach(competenceM3 -> {
+            competenceM3.setDescription(parse(competenceM3.getDescription()));
+            competences3.add(new Competence3(competenceM3, competence2DAO.getCompetence2ById(competenceM3.getIdCompetence()).orElseThrow()));
+        });
+        competence2DAO.saveAllCompetence3(competences3);
     }
 
     private String parse(String description) {

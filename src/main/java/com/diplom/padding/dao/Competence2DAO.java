@@ -1,12 +1,14 @@
 package com.diplom.padding.dao;
 
-import com.diplom.padding.entity.app.Competence2;
+import com.diplom.padding.entity.app.*;
 import com.diplom.padding.entity.moodle.CompetenceMoodle2;
 
-import java.util.List;
+import java.util.*;
 
 public interface Competence2DAO {
-    List<Competence2> saveAll(List<Competence2> competences);
+    Optional<Competence2> getCompetence2ById(Long id);
+    List<Competence2> saveAllCompetence2(List<Competence2> competences);
+    List<Competence3> saveAllCompetence3(List<Competence3> competences);
     List<CompetenceMoodle2> findAllCompetence2();
     List<CompetenceMoodle2> findAllCompetence3();
 }

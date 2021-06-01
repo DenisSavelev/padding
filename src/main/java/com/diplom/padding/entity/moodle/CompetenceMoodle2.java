@@ -26,6 +26,10 @@ public class CompetenceMoodle2 {
         return shortname;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getDescription() {
         return description;
     }

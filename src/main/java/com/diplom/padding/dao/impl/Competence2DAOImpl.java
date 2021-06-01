@@ -1,31 +1,44 @@
 package com.diplom.padding.dao.impl;
 
+import com.diplom.padding.entity.app.*;
+import com.diplom.padding.repositories.app.*;
 import com.diplom.padding.dao.Competence2DAO;
 import org.springframework.stereotype.Repository;
-import com.diplom.padding.entity.app.Competence2;
 import com.diplom.padding.entity.moodle.CompetenceMoodle2;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.diplom.padding.repositories.app.Competence2Repository;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class Competence2DAOImpl implements Competence2DAO {
     private final Competence2Repository repositoryApp;
+    private final Competence3Repository repositoryApp2;
     private final LocalContainerEntityManagerFactoryBean lem;
 
     @Autowired
-    public Competence2DAOImpl(Competence2Repository repositoryApp, LocalContainerEntityManagerFactoryBean lem) {
+    public Competence2DAOImpl(Competence2Repository repositoryApp, Competence3Repository repositoryApp2,
+                              LocalContainerEntityManagerFactoryBean lem) {
         this.repositoryApp = repositoryApp;
+        this.repositoryApp2 = repositoryApp2;
         this.lem = lem;
     }
 
     @Override
-    public List<Competence2> saveAll(List<Competence2> competences) {
+    public Optional<Competence2> getCompetence2ById(Long id) {
+        return repositoryApp.findById(id);
+    }
+
+    @Override
+    public List<Competence2> saveAllCompetence2(List<Competence2> competences) {
         return repositoryApp.saveAll(competences);
+    }
+
+    @Override
+    public List<Competence3> saveAllCompetence3(List<Competence3> competences) {
+        return repositoryApp2.saveAll(competences);
     }
 
     @Override

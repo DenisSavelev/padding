@@ -26,7 +26,7 @@ public class CourseTaskMoodleDAOImpl implements CourseTaskMoodleDAO {
         Predicate predicate = cb.conjunction();
         Predicate area = cb.and(cb.equal(root.get("idTask"), idTask), cb.equal(root.get("idCourse"), idCourse));
         predicate = cb.and(predicate, area);
-        Predicate area1 = cb.and(cb.equal(root.get("module"), 1L), cb.equal(root.get("module"), 17L));
+        Predicate area1 = cb.or(cb.equal(root.get("module"), 1L), cb.equal(root.get("module"), 17L));
         predicate = cb.and(predicate, area1);
         cq.select(root.get("id")).where(predicate);
         TypedQuery<Long> tq = em.createQuery(cq);

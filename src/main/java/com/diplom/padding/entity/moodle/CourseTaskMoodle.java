@@ -11,8 +11,8 @@ public class CourseTaskMoodle {
     private Long idCourse;
     @Column(name = "instance")
     private Long idTask;
-    @Column(name = "timemodified")
-    private Long modified;
+    @Column(name = "added")
+    private Long added;
 
     public Long getId() {
         return id;

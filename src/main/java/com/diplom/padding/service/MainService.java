@@ -75,9 +75,8 @@ public class MainService {
         competence2DAO.saveAllCompetence3(competences3);
 
         List<Task> tasks = new ArrayList<>();
-        taskDAO.findAll().forEach(taskMoodle -> {
-
-        });
+        taskDAO.findAll().forEach(taskMoodle -> tasks.add(new Task()));
+        taskDAO.saveAll(tasks);
     }
 
     private String parse(String description) {

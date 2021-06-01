@@ -15,8 +15,6 @@ public class TaskMoodle {
     private Float minRating;
     @Column(name = "courseid")
     private Long idCourse;
-    @Column(name = "itemmodule")
-    private String level;
     @Column(name = "iteminstance")
     private Long idItem;
     @Column(name = "timemodified")
@@ -40,10 +38,6 @@ public class TaskMoodle {
 
     public Long getIdCourse() {
         return idCourse;
-    }
-
-    public String getLevel() {
-        return level;
     }
 
     public Long getIdItem() {

@@ -13,8 +13,6 @@ public class Task {
     private Float maxRating;
     private Float minRating;
     @ManyToOne
-    private Level level;
-    @ManyToOne
     private Course course;
     @ManyToMany
     List<Competence2> competences2;
@@ -24,12 +22,11 @@ public class Task {
     public Task() {
     }
 
-    public Task(TaskMoodle task, Level level, Course course, List<Competence2> competence2, List<Competence3> competence3) {
+    public Task(TaskMoodle task, Course course, List<Competence2> competence2, List<Competence3> competence3) {
         this.id = task.getId();
         this.name = task.getName();
         this.maxRating = task.getMaxRating();
         this.minRating = task.getMinRating();
-        this.level = level;
         this.course = course;
         this.competences2 = competence2;
         this.competences3 = competence3;
@@ -65,14 +62,6 @@ public class Task {
 
     public void setMinRating(Float minRating) {
         this.minRating = minRating;
-    }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
     }
 
     public Course getCourse() {

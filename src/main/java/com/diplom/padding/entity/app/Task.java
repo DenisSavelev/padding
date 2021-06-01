@@ -15,19 +15,22 @@ public class Task {
     @ManyToOne
     private Course course;
     @ManyToMany
-    List<Competence> competences;
+    List<Competence2> competences2;
+    @ManyToMany
+    List<Competence3> competences3;
 
     public Task() {
     }
 
-    public Task(Long id, String name, Float maxRating, Float minRating, Level level, Course course, List<Competence> competences) {
+    public Task(Long id, String name, Float maxRating, Float minRating, Level level, Course course, List<Competence2> competences2, List<Competence3> competences3) {
         this.id = id;
         this.name = name;
         this.maxRating = maxRating;
         this.minRating = minRating;
         this.level = level;
         this.course = course;
-        this.competences = competences;
+        this.competences2 = competences2;
+        this.competences3 = competences3;
     }
 
     public Long getId() {
@@ -78,11 +81,19 @@ public class Task {
         this.course = course;
     }
 
-    public List<Competence> getCompetences() {
-        return competences;
+    public List<Competence2> getCompetences2() {
+        return competences2;
     }
 
-    public void setCompetences(List<Competence> competences) {
-        this.competences = competences;
+    public void setCompetences2(List<Competence2> competences2) {
+        this.competences2 = competences2;
+    }
+
+    public List<Competence3> getCompetences3() {
+        return competences3;
+    }
+
+    public void setCompetences3(List<Competence3> competences3) {
+        this.competences3 = competences3;
     }
 }

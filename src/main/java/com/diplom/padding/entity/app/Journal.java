@@ -12,18 +12,15 @@ public class Journal {
     @ManyToOne
     private Task task;
     private String rating;
-    @ManyToMany
-    List<Competence3> competences;
 
     public Journal() {
     }
 
-    public Journal(Long id, User user, Task task, String rating, List<Competence3> competences) {
+    public Journal(Long id, User user, Task task, String rating) {
         this.id = id;
         this.user = user;
         this.task = task;
         this.rating = rating;
-        this.competences = competences;
     }
 
     public Long getId() {
@@ -56,13 +53,5 @@ public class Journal {
 
     public void setRating(String rating) {
         this.rating = rating;
-    }
-
-    public List<Competence3> getCompetences() {
-        return competences;
-    }
-
-    public void setCompetences(List<Competence3> competences) {
-        this.competences = competences;
     }
 }

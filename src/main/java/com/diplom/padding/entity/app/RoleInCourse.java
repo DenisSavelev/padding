@@ -16,13 +16,6 @@ public class RoleInCourse {
     public RoleInCourse() {
     }
 
-    public RoleInCourse(Long id, User user, Role role, Course course) {
-        this.id = id;
-        this.user = user;
-        this.role = role;
-        this.course = course;
-    }
-
     public Long getId() {
         return id;
     }

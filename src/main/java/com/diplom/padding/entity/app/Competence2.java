@@ -16,13 +16,6 @@ public class Competence2 {
     public Competence2() {
     }
 
-    public Competence2(Long id, String shortname, String description, Competence competence) {
-        this.id = id;
-        this.shortname = shortname;
-        this.description = description;
-        this.competence = competence;
-    }
-
     public Competence2(CompetenceMoodle2 competenceMoodle2, Competence competence) {
         this.id = competenceMoodle2.getId();
         this.shortname = competenceMoodle2.getShortname();

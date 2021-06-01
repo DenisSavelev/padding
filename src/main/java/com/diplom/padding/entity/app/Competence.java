@@ -13,12 +13,6 @@ public class Competence {
     public Competence() {
     }
 
-    public Competence(Long id, String shortname, String description) {
-        this.id = id;
-        this.shortname = shortname;
-        this.description = description;
-    }
-
     public Competence(CompetenceMoodle competenceMoodle) {
         this.id = competenceMoodle.getId();
         this.shortname = competenceMoodle.getShortname();

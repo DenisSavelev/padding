@@ -13,12 +13,6 @@ public class File {
     public File() {
     }
 
-    public File(Long id, String title, User user) {
-        this.id = id;
-        this.title = title;
-        this.user = user;
-    }
-
     public Long getId() {
         return id;
     }

@@ -1,5 +1,7 @@
 package com.diplom.padding.entity.app;
 
+import com.diplom.padding.entity.moodle.TaskMoodle;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,15 +24,15 @@ public class Task {
     public Task() {
     }
 
-    public Task(Long id, String name, Float maxRating, Float minRating, Level level, Course course, List<Competence2> competences2, List<Competence3> competences3) {
-        this.id = id;
-        this.name = name;
-        this.maxRating = maxRating;
-        this.minRating = minRating;
+    public Task(TaskMoodle task, Level level, Course course, List<Competence2> competence2, List<Competence3> competence3) {
+        this.id = task.getId();
+        this.name = task.getName();
+        this.maxRating = task.getMaxRating();
+        this.minRating = task.getMinRating();
         this.level = level;
         this.course = course;
-        this.competences2 = competences2;
-        this.competences3 = competences3;
+        this.competences2 = competence2;
+        this.competences3 = competence3;
     }
 
     public Long getId() {

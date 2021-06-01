@@ -12,11 +12,6 @@ public class Role {
     public Role() {
     }
 
-    public Role(Integer id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     public Role(RoleMoodle roleMoodle) {
         this.id = Math.toIntExact(roleMoodle.getId());
         this.name = roleMoodle.getName();

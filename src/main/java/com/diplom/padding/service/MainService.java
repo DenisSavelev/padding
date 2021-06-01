@@ -13,6 +13,7 @@ import java.util.*;
 public class MainService {
     private final RoleDAO roleDAO;
     private final UserDAO userDAO;
+    private final TaskDAO taskDAO;
     private final CourseDAO courseDAO;
     private final CompetenceDAO competenceDAO;
     private final Competence2DAO competence2DAO;
@@ -25,10 +26,11 @@ public class MainService {
     }*/
 
     @Autowired
-    public MainService(RoleDAO roleDAO, UserDAO userDAO, CourseDAO courseDAO, CompetenceDAO competenceDAO,
-                       Competence2DAO competence2DAO) {
+    public MainService(RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, CourseDAO courseDAO,
+                       CompetenceDAO competenceDAO, Competence2DAO competence2DAO) {
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
+        this.taskDAO = taskDAO;
         this.courseDAO = courseDAO;
         this.competenceDAO = competenceDAO;
         this.competence2DAO = competence2DAO;
@@ -71,6 +73,11 @@ public class MainService {
             competences3.add(new Competence3(competenceM3, competence2DAO.getCompetence2ById(competenceM3.getIdCompetence()).orElseThrow()));
         });
         competence2DAO.saveAllCompetence3(competences3);
+
+        List<Task> tasks = new ArrayList<>();
+        taskDAO.findAll().forEach(taskMoodle -> {
+
+        });
     }
 
     private String parse(String description) {

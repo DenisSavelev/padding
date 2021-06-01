@@ -12,12 +12,6 @@ public class Course {
 
     public Course() {
     }
-
-    public Course(Long id, String fullName, String shortName) {
-        this.id = id;
-        this.fullName = fullName;
-        this.shortName = shortName;
-    }
     
     public Course(CourseMoodle courseMoodle) {
         this.id = courseMoodle.getId();

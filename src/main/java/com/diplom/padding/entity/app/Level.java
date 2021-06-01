@@ -11,11 +11,6 @@ public class Level {
     public Level() {
     }
 
-    public Level(Integer id, String title) {
-        this.id = id;
-        this.title = title;
-    }
-
     public Integer getId() {
         return id;
     }

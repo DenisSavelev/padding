@@ -16,13 +16,6 @@ public class Journal {
     public Journal() {
     }
 
-    public Journal(Long id, User user, Task task, String rating) {
-        this.id = id;
-        this.user = user;
-        this.task = task;
-        this.rating = rating;
-    }
-
     public Long getId() {
         return id;
     }

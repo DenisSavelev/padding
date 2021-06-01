@@ -19,16 +19,6 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String surname, String name, String patronymic, String login, String password, String email) {
-        this.id = id;
-        this.surname = surname;
-        this.name = name;
-        this.patronymic = patronymic;
-        this.login = login;
-        this.password = password;
-        this.email = email;
-    }
-
     public User(UserMoodle userMoodle) {
         this.id = userMoodle.getId();
         this.surname = userMoodle.getSurname();

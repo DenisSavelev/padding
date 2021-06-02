@@ -76,7 +76,7 @@ public class MainService {
         List<CompetenceMoodle2> competenceMs2 = competence2DAO.findAllCompetence2();
         competenceMs2.parallelStream().forEach(competenceM2 -> {
             competenceM2.setDescription(parse(competenceM2.getDescription()));
-            competences2.add(new Competence2(competenceM2, competenceDAO.getById(competenceM2.getIdCompetence()).orElseThrow()));
+            competenceDAO.getById(competenceM2.getIdCompetence()).ifPresent(c -> competences2.add(new Competence2(competenceM2, c)));
         });
         competence2DAO.saveAllCompetence2(competences2);
 
@@ -84,7 +84,7 @@ public class MainService {
         List<CompetenceMoodle2> competenceMs3 = competence2DAO.findAllCompetence3();
         competenceMs3.parallelStream().forEach(competenceM3 -> {
             competenceM3.setDescription(parse(competenceM3.getDescription()));
-            competences3.add(new Competence3(competenceM3, competence2DAO.getCompetence2ById(competenceM3.getIdParent()).orElseThrow()));
+            competence2DAO.getCompetence2ById(competenceM3.getIdParent()).ifPresent(c -> competences3.add(new Competence3(competenceM3, c)));
         });
         competence2DAO.saveAllCompetence3(competences3);
 
@@ -96,11 +96,15 @@ public class MainService {
                 competence2DAO.getCompetence2ById(id).ifPresent(competence2s::add);
                 competence2DAO.getCompetence3ById(id).ifPresent(competence3s::add);
             });
-            tasks.add(new Task(taskMoodle, courseDAO.getById(taskMoodle.getIdCourse()).orElseThrow(), competence2s, competence3s));
+            courseDAO.getById(taskMoodle.getIdCourse()).ifPresent(t -> tasks.add(new Task(taskMoodle, t, competence2s, competence3s)));
         }));
         taskDAO.saveAll(tasks);
 
         List<Journal> journals = new ArrayList<>();
+        /*journalDAO.findAll().parallelStream().forEach(journalMoodle -> {
+
+        });*/
+        journalDAO.saveAll(journals);
     }
 
     private String parse(String description) {

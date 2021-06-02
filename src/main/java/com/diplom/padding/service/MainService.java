@@ -16,6 +16,7 @@ public class MainService {
     private final TaskDAO taskDAO;
     private final FileDAO fileDAO;
     private final CourseDAO courseDAO;
+    private final JournalDAO journalDAO;
     private final CompetenceDAO competenceDAO;
     private final Competence2DAO competence2DAO;
     private final CourseTaskMoodleDAO courseTaskMoodleDAO;
@@ -30,13 +31,14 @@ public class MainService {
 
     @Autowired
     public MainService(RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
-                       CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO courseTaskMoodleDAO,
-                       CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
+                       JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO,
+                       CourseTaskMoodleDAO courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
         this.fileDAO = fileDAO;
         this.courseDAO = courseDAO;
+        this.journalDAO = journalDAO;
         this.competenceDAO = competenceDAO;
         this.competence2DAO = competence2DAO;
         this.courseTaskMoodleDAO = courseTaskMoodleDAO;
@@ -97,6 +99,8 @@ public class MainService {
             tasks.add(new Task(taskMoodle, courseDAO.getById(taskMoodle.getIdCourse()).orElseThrow(), competence2s, competence3s));
         }));
         taskDAO.saveAll(tasks);
+
+        List<Journal> journals = new ArrayList<>();
     }
 
     private String parse(String description) {

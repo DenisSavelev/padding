@@ -1,27 +1,25 @@
 package com.diplom.padding.dao.impl;
 
 import com.diplom.padding.dao.JournalDAO;
-import com.diplom.padding.entity.moodle.*;
 import com.diplom.padding.entity.app.Journal;
-import com.diplom.padding.repositories.moodle.*;
 import org.springframework.stereotype.Repository;
+import com.diplom.padding.entity.moodle.JournalMoodle;
 import com.diplom.padding.repositories.app.JournalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.*;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @Repository
 public class JournalDAOImpl implements JournalDAO {
+    private final EntityManager entityManager;
     private final JournalRepository repositoryApp;
-    private final AssignJournalMoodleRepository repositoryAssign;
-    private final QuizJournalMoodleRepository repositoryQuiz;
 
     @Autowired
-    public JournalDAOImpl(JournalRepository repositoryApp, AssignJournalMoodleRepository repositoryAssign,
-                          QuizJournalMoodleRepository repositoryQuiz) {
+    public JournalDAOImpl(EntityManager entityManager, JournalRepository repositoryApp) {
+        this.entityManager = entityManager;
         this.repositoryApp = repositoryApp;
-        this.repositoryAssign = repositoryAssign;
-        this.repositoryQuiz = repositoryQuiz;
     }
 
     @Override
@@ -30,12 +28,11 @@ public class JournalDAOImpl implements JournalDAO {
     }
 
     @Override
-    public List<AssignJournalMoodle> findAllAssign() {
-        return repositoryAssign.findAll();
-    }
-
-    @Override
-    public List<QuizJournalMoodle> findAllQuiz() {
-        return repositoryQuiz.findAll();
+    public List<JournalMoodle> findAll() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<JournalMoodle> cq = cb.createQuery(JournalMoodle.class);
+        Root<JournalMoodle> root = cq.from(JournalMoodle.class);
+        cq.where(cb.isNotNull(root.get("grade")));
+        return entityManager.createQuery(cq).getResultList();
     }
 }

@@ -28,6 +28,7 @@ public class MainService {
         }
     }*/
 
+    @Autowired
     public MainService(RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
                        CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO courseTaskMoodleDAO,
                        CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
@@ -41,9 +42,6 @@ public class MainService {
         this.courseTaskMoodleDAO = courseTaskMoodleDAO;
         this.courseTaskCompetenceMoodleDAO = courseTaskCompetenceMoodleDAO;
     }
-
-    @Autowired
-
 
     @PostConstruct
     public void startDate() {

@@ -12,6 +12,8 @@ public class Journal {
     @ManyToOne
     private Task task;
     private String rating;
+    @OneToMany
+    private List<File> files;
 
     public Journal() {
     }
@@ -46,5 +48,13 @@ public class Journal {
 
     public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    public List<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
     }
 }

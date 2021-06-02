@@ -55,7 +55,7 @@ public class MainService {
         userDAO.saveAll(users);
 
         List<File> files = new ArrayList<>();
-        fileDAO.findAll().parallelStream().forEach(file -> files.add(new File(file, userDAO.getById(file.getIdUser()).orElseThrow())));
+        fileDAO.findAll().parallelStream().forEach(file -> files.add(new File(file)));
         fileDAO.saveAll(files);
 
         List<Course> courses = new ArrayList<>();

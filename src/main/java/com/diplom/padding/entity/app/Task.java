@@ -12,6 +12,7 @@ public class Task {
     private String name;
     private Float maxRating;
     private Float minRating;
+    private String type;
     @ManyToOne
     private Course course;
     @ManyToMany
@@ -27,6 +28,7 @@ public class Task {
         this.name = task.getName();
         this.maxRating = task.getMaxRating();
         this.minRating = task.getMinRating();
+        this.type = task.getType();
         this.course = course;
         this.competences2 = competence2;
         this.competences3 = competence3;
@@ -62,6 +64,14 @@ public class Task {
 
     public void setMinRating(Float minRating) {
         this.minRating = minRating;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Course getCourse() {

@@ -13,6 +13,8 @@ public class TaskMoodle {
     private Float maxRating;
     @Column(name = "grademin")
     private Float minRating;
+    @Column(name = "itemtype")
+    private String type;
     @Column(name = "courseid")
     private Long idCourse;
     @Column(name = "iteminstance")
@@ -34,6 +36,10 @@ public class TaskMoodle {
 
     public Float getMinRating() {
         return minRating;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public Long getIdCourse() {

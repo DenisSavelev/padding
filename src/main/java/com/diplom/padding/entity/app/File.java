@@ -10,17 +10,14 @@ public class File {
     private Long id;
     private String title;
     private String path;
-    @ManyToOne
-    private User user;
 
     public File() {
     }
 
-    public File(FileMoodle fileMoodle, User user) {
+    public File(FileMoodle fileMoodle) {
         this.id = fileMoodle.getId();
         this.title = fileMoodle.getName();
         this.path = fileMoodle.getContenthash().substring(0, 2) + "/" + fileMoodle.getContenthash().substring(2, 4);
-        this.user = user;
     }
 
     public Long getId() {
@@ -45,13 +42,5 @@ public class File {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

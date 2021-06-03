@@ -2,6 +2,7 @@ package com.diplom.padding.dao.impl;
 
 import com.diplom.padding.dao.FileDAO;
 import com.diplom.padding.entity.app.File;
+import com.diplom.padding.entity.moodle.UserMoodle;
 import org.springframework.stereotype.Repository;
 import com.diplom.padding.entity.moodle.FileMoodle;
 import org.springframework.beans.factory.annotation.*;
@@ -9,6 +10,7 @@ import com.diplom.padding.repositories.app.FileRepository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -45,6 +47,16 @@ public class FileDAOImpl implements FileDAO {
         CriteriaQuery<FileMoodle> cq = cb.createQuery(FileMoodle.class);
         Root<FileMoodle> root = cq.from(FileMoodle.class);
         cq.where(filter(cb, root));
+        return entityManager.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<FileMoodle> findForTheDay() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<FileMoodle> cq = cb.createQuery(FileMoodle.class);
+        Root<FileMoodle> root = cq.from(FileMoodle.class);
+        Predicate time = cb.lessThan(cb.diff((new Date().getTime() / 1000), root.get("modified")), 88200L);
+        cq.where(cb.and(filter(cb, root), time));
         return entityManager.createQuery(cq).getResultList();
     }
 

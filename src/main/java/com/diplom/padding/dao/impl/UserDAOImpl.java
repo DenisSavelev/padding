@@ -37,7 +37,23 @@ public class UserDAOImpl implements UserDAO {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<UserMoodle> cq = cb.createQuery(UserMoodle.class);
         Root<UserMoodle> root = cq.from(UserMoodle.class);
-        cq.where(cb.and(cb.greaterThan(root.get("id"), 2L), cb.isNotNull(root.get("id"))));
+        cq.where(filter(cb, root));
         return entityManager.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<UserMoodle> findForTheDay() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<UserMoodle> cq = cb.createQuery(UserMoodle.class);
+        Root<UserMoodle> root = cq.from(UserMoodle.class);
+        Predicate time = cb.lessThan(cb.diff((new Date().getTime() / 1000), root.get("modified")), 88200L);
+        cq.where(cb.and(filter(cb, root), time));
+        return entityManager.createQuery(cq).getResultList();
+    }
+
+    private Predicate filter(CriteriaBuilder cb, Root<UserMoodle> root) {
+        Predicate predicate = cb.conjunction();
+        Predicate filter = cb.and(cb.greaterThan(root.get("id"), 2L), cb.isNotNull(root.get("id")));
+        return cb.and(predicate, filter);
     }
 }

@@ -9,18 +9,17 @@ public class File {
     @Id
     private Long id;
     private String title;
+    private String hash;
     private String path;
-    @ManyToOne
-    private User user;
 
     public File() {
     }
 
-    public File(FileMoodle fileMoodle, User user) {
+    public File(FileMoodle fileMoodle) {
         this.id = fileMoodle.getId();
         this.title = fileMoodle.getName();
-        this.path = fileMoodle.getContenthash().substring(0, 2) + "/" + fileMoodle.getContenthash().substring(2, 4);
-        this.user = user;
+        this.hash = fileMoodle.getContentHash();
+        this.path = fileMoodle.getContentHash().substring(0, 2) + "/" + fileMoodle.getContentHash().substring(2, 4);
     }
 
     public Long getId() {
@@ -39,19 +38,19 @@ public class File {
         this.title = title;
     }
 
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
     public String getPath() {
         return path;
     }
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

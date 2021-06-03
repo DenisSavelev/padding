@@ -1,5 +1,7 @@
 package com.diplom.padding.entity.app;
 
+import com.diplom.padding.entity.moodle.JournalMoodle;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,9 +13,19 @@ public class Journal {
     private User user;
     @ManyToOne
     private Task task;
-    private String rating;
+    private Float rating;
+    @OneToMany
+    private List<File> files;
 
     public Journal() {
+    }
+
+    public Journal(JournalMoodle journal, User user, Task task, List<File> files) {
+        this.id = journal.getId();
+        this.user = user;
+        this.task = task;
+        this.rating = journal.getGrade();
+        this.files = files;
     }
 
     public Long getId() {
@@ -40,11 +52,19 @@ public class Journal {
         this.task = task;
     }
 
-    public String getRating() {
+    public Float getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(Float rating) {
         this.rating = rating;
+    }
+
+    public List<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
     }
 }

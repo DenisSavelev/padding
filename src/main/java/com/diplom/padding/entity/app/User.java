@@ -15,6 +15,8 @@ public class User {
     private String login;
     private String password;
     private String email;
+    @ManyToOne
+    private Role role;
 
     public User() {
     }
@@ -83,5 +85,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

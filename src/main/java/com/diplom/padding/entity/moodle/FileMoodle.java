@@ -8,11 +8,17 @@ public class FileMoodle {
     @Id
     private Long id;
     @Column(name = "contenthash")
-    private String contenthash;
+    private String contentHash;
     @Column(name = "filename")
     private String name;
+    @Column(name = "itemid")
+    private Long idTask;
     @Column(name = "userid")
     private Long idUser;
+    @Column(name = "component")
+    private String component;
+    @Column(name = "author")
+    private String author;
     @Column(name = "timemodified")
     private Long modified;
 
@@ -20,8 +26,8 @@ public class FileMoodle {
         return id;
     }
 
-    public String getContenthash() {
-        return contenthash;
+    public String getContentHash() {
+        return contentHash;
     }
 
     public String getName() {

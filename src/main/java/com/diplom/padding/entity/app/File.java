@@ -9,6 +9,7 @@ public class File {
     @Id
     private Long id;
     private String title;
+    private String hash;
     private String path;
 
     public File() {
@@ -17,6 +18,7 @@ public class File {
     public File(FileMoodle fileMoodle) {
         this.id = fileMoodle.getId();
         this.title = fileMoodle.getName();
+        this.hash = fileMoodle.getContentHash();
         this.path = fileMoodle.getContentHash().substring(0, 2) + "/" + fileMoodle.getContentHash().substring(2, 4);
     }
 
@@ -34,6 +36,14 @@ public class File {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     public String getPath() {

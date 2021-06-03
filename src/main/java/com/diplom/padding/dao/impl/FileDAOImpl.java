@@ -48,8 +48,7 @@ public class FileDAOImpl implements FileDAO {
         return entityManager.createQuery(cq).getResultList();
     }
 
-    @Override
-    public List<Long> getIdByUserAndTask(Long idUser, Long idTask) {
+    private List<Long> getIdByUserAndTask(Long idUser, Long idTask) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<FileMoodle> root = cq.from(FileMoodle.class);

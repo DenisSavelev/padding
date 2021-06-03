@@ -30,8 +30,8 @@ public class MainService {
     }*/
 
     @Autowired
-    public MainService(RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
-                       JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO,
+    public MainService(RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO, JournalDAO journalDAO,
+                       CompetenceDAO competenceDAO, Competence2DAO competence2DAO,
                        CourseTaskMoodleDAO courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
@@ -48,8 +48,10 @@ public class MainService {
     @PostConstruct
     public void startDate() {
         List<Role> roles = new ArrayList<>();
-        roleDAO.findAll().forEach(roleMoodle -> roles.add(new Role(roleMoodle)));
-        roleDAO.findAll().parallelStream().forEach(roleMoodle -> roles.add(new Role(roleMoodle)));
+        String[] title = new String[] {"Admin", "Teacher", "Student", "ManagerCompetency"};
+        for(byte i = 0; i < 4; i++) {
+           roles.add(new Role((byte) (i+1), title[i]));
+        }
         roleDAO.saveAll(roles);
 
         List<User> users = new ArrayList<>();

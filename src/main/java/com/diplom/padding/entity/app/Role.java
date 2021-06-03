@@ -1,35 +1,34 @@
 package com.diplom.padding.entity.app;
 
-import com.diplom.padding.entity.moodle.RoleMoodle;
 import javax.persistence.*;
 
 @Entity
 public class Role {
     @Id
-    private Integer id;
-    private String name;
+    private Byte id;
+    private String title;
 
-    public Role() {
+    public Role(){
     }
 
-    public Role(RoleMoodle roleMoodle) {
-        this.id = Math.toIntExact(roleMoodle.getId());
-        this.name = roleMoodle.getName();
+    public Role(Byte id, String title) {
+        this.id = id;
+        this.title = title;
     }
 
-    public Integer getId() {
+    public Byte getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Byte id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

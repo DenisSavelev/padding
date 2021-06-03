@@ -3,9 +3,9 @@ package com.diplom.padding.dao.impl;
 import com.diplom.padding.dao.JournalDAO;
 import com.diplom.padding.entity.app.Journal;
 import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.*;
 import com.diplom.padding.entity.moodle.JournalMoodle;
 import com.diplom.padding.repositories.app.JournalRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
@@ -17,7 +17,7 @@ public class JournalDAOImpl implements JournalDAO {
     private final JournalRepository repositoryApp;
 
     @Autowired
-    public JournalDAOImpl(EntityManager entityManager, JournalRepository repositoryApp) {
+    public JournalDAOImpl(@Qualifier("mySQLEntityManager")EntityManager entityManager, JournalRepository repositoryApp) {
         this.entityManager = entityManager;
         this.repositoryApp = repositoryApp;
     }

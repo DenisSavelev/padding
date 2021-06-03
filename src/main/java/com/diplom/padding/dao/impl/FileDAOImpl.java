@@ -2,7 +2,6 @@ package com.diplom.padding.dao.impl;
 
 import com.diplom.padding.dao.FileDAO;
 import com.diplom.padding.entity.app.File;
-import com.diplom.padding.entity.moodle.UserMoodle;
 import org.springframework.stereotype.Repository;
 import com.diplom.padding.entity.moodle.FileMoodle;
 import org.springframework.beans.factory.annotation.*;
@@ -10,8 +9,7 @@ import com.diplom.padding.repositories.app.FileRepository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class FileDAOImpl implements FileDAO {

@@ -2,18 +2,14 @@ package com.diplom.padding.dao.impl;
 
 import com.diplom.padding.dao.CompetenceDAO;
 import com.diplom.padding.entity.app.Competence;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.*;
 import com.diplom.padding.entity.moodle.CompetenceMoodle;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.diplom.padding.repositories.app.CompetenceRepository;
 import com.diplom.padding.repositories.moodle.CompetenceMoodleRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.*;
+import javax.persistence.criteria.*;
 import java.util.*;
 
 @Repository
@@ -23,7 +19,8 @@ public class CompetenceDAOImpl implements CompetenceDAO {
     private final EntityManager entityManager;
 
     @Autowired
-    public CompetenceDAOImpl(CompetenceRepository repositoryApp, CompetenceMoodleRepository repositoryMoodle, @Qualifier("mySQLEntityManager") EntityManager entityManager) {
+    public CompetenceDAOImpl(CompetenceRepository repositoryApp, CompetenceMoodleRepository repositoryMoodle,
+                             @Qualifier("mySQLEntityManager")EntityManager entityManager) {
         this.repositoryApp = repositoryApp;
         this.repositoryMoodle = repositoryMoodle;
         this.entityManager = entityManager;

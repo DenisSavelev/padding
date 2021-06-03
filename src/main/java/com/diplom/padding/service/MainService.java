@@ -1,16 +1,20 @@
 package com.diplom.padding.service;
 
 import com.diplom.padding.dao.*;
+import com.diplom.padding.Git.GitApp;
 import com.diplom.padding.entity.app.*;
 import com.diplom.padding.entity.moodle.*;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
 public class MainService {
+    private final GitApp git;
     private final RoleDAO roleDAO;
     private final UserDAO userDAO;
     private final TaskDAO taskDAO;
@@ -22,17 +26,18 @@ public class MainService {
     private final CourseTaskMoodleDAO courseTaskMoodleDAO;
     private final CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO;
 
-    /*@Scheduled(fixedDelay = 3600000)
+    @Scheduled(fixedDelay = 3600000)
     public void exportData() {
         SimpleDateFormat hour = new SimpleDateFormat("HH");
         if (hour.format(new Date()).equals("05")) {
         }
-    }*/
+    }
 
     @Autowired
-    public MainService(RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO, JournalDAO journalDAO,
-                       CompetenceDAO competenceDAO, Competence2DAO competence2DAO,
+    public MainService(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
+                       JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO,
                        CourseTaskMoodleDAO courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
+        this.git = git;
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;

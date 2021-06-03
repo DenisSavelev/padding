@@ -13,7 +13,7 @@ public class TaskMoodle {
     private Float maxRating;
     @Column(name = "grademin")
     private Float minRating;
-    @Column(name = "itemtype")
+    @Column(name = "itemmodule")
     private String type;
     @Column(name = "courseid")
     private Long idCourse;

@@ -45,7 +45,7 @@ public class MainService {
         this.courseTaskCompetenceMoodleDAO = courseTaskCompetenceMoodleDAO;
     }
 
-    @PostConstruct
+    //@PostConstruct
     public void startDate() {
         List<Role> roles = new ArrayList<>();
         String[] title = new String[] {"Admin", "Teacher", "Student", "ManagerCompetency"};

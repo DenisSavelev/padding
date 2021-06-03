@@ -9,4 +9,5 @@ public interface TaskDAO {
     Optional<Task> getById(Long id);
     List<Task> saveAll(List<Task> tasks);
     List<TaskMoodle> findAll();
+    List<TaskMoodle> findForTheDay();
 }

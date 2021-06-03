@@ -9,7 +9,7 @@ import com.diplom.padding.repositories.app.TaskRepository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class TaskDAOImpl implements TaskDAO {
@@ -20,6 +20,11 @@ public class TaskDAOImpl implements TaskDAO {
     public TaskDAOImpl(TaskRepository repositoryApp, @Qualifier("mySQLEntityManager")EntityManager entityManager) {
         this.repositoryApp = repositoryApp;
         this.entityManager = entityManager;
+    }
+
+    @Override
+    public Optional<Task> getById(Long id) {
+        return repositoryApp.findById(id);
     }
 
     @Override

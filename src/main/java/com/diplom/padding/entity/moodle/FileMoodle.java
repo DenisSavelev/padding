@@ -8,7 +8,7 @@ public class FileMoodle {
     @Id
     private Long id;
     @Column(name = "contenthash")
-    private String contenthash;
+    private String contentHash;
     @Column(name = "filename")
     private String name;
     @Column(name = "userid")
@@ -20,8 +20,8 @@ public class FileMoodle {
         return id;
     }
 
-    public String getContenthash() {
-        return contenthash;
+    public String getContentHash() {
+        return contentHash;
     }
 
     public String getName() {

@@ -46,7 +46,7 @@ public class GitController {
     @PostMapping(value="/delete")
     public @ResponseBody
     ResponseEntity<String> deleteBranch(HttpServletRequest request, GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
-        gitApp.deleteBranch(gitModel);
+        //gitApp.deleteBranch(gitModel);
         return new ResponseEntity<>( HttpStatus.OK);
     }
 }

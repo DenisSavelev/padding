@@ -1,12 +1,9 @@
 package com.diplom.padding.Git.impl;
 
-
-
 import com.diplom.padding.Git.GitApp;
 import com.diplom.padding.model.GitModel;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.internal.ketch.RemoteGitReplica;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.RefSpec;
@@ -22,7 +19,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 
 @Service
 public class GitAppImpl implements GitApp {
@@ -61,8 +57,8 @@ public class GitAppImpl implements GitApp {
     public Git gitClone(GitModel gitModel, MultipartFile src) throws GitAPIException, IOException, URISyntaxException {
         String dest = "~/local";
         Git git = Git.cloneRepository()
-                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")//дописать имя репозитоиря соответсвующего дисциплине после root/IIE.git
-                .setBranch("master")//gitModel.getTaskName()+"/"+gitModel.getUserName()
+                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")
+                .setBranch("master")
                 .setDirectory(new File(dest))
                 .call();
         String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
@@ -95,31 +91,28 @@ public class GitAppImpl implements GitApp {
         push.call();
     }
 
-    public void deleteBranch(GitModel gitModel) throws GitAPIException, URISyntaxException {
-        String dest = "~/local";
+    public void deleteBranch(Git git, GitModel gitModel) throws GitAPIException, URISyntaxException {
         String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
-        Git git = Git.cloneRepository()
-                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")//дописать имя репозитоиря соответсвующего дисциплине после root/IIE.git
-                .setBranch("master")//gitModel.getTaskName()+"/"+gitModel.getUserName()
-                .setDirectory(new File(dest))
-                .call();
         RefSpec refSpec = new RefSpec()
                 .setSource(null)
                 .setDestination("refs/heads/"+branch);
-        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider("root", "root1234")).setRefSpecs(refSpec).setRemote("origin").call();
+        git.push()
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider("root", "root1234"))
+                .setRefSpecs(refSpec)
+                .setRemote("origin").call();
     }
 
     public void gitMerge(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
         String dest = "~/local";
         String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
         Git git = Git.cloneRepository()
-                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")//дописать имя репозитоиря соответсвующего дисциплине после root/IIE.git
-                .setBranch("master")//gitModel.getTaskName()+"/"+gitModel.getUserName()
+                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")
+                .setBranch("master")
                 .setDirectory(new File(dest))
                 .call();
         ObjectId objectId = git.getRepository().resolve("origin/"+ branch);
         git.merge().setCommit(true).include(objectId).call();
-        //deleteBranch(git, gitModel);
+        deleteBranch(git, gitModel);
         gitPush(git, gitModel.getDiscipline());
     }
 

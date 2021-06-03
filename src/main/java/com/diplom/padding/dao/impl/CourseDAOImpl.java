@@ -2,7 +2,6 @@ package com.diplom.padding.dao.impl;
 
 import com.diplom.padding.dao.CourseDAO;
 import com.diplom.padding.entity.app.Course;
-import com.diplom.padding.entity.moodle.UserMoodle;
 import org.springframework.stereotype.Repository;
 import com.diplom.padding.entity.moodle.CourseMoodle;
 import org.springframework.beans.factory.annotation.*;
@@ -10,9 +9,7 @@ import com.diplom.padding.repositories.app.CourseRepository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class CourseDAOImpl implements CourseDAO {

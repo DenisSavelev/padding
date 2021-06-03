@@ -2,7 +2,6 @@ package com.diplom.padding.dao;
 
 import com.diplom.padding.entity.app.Course;
 import com.diplom.padding.entity.moodle.CourseMoodle;
-import com.diplom.padding.entity.moodle.FileMoodle;
 
 import java.util.*;
 

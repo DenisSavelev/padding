@@ -37,7 +37,23 @@ public class TaskDAOImpl implements TaskDAO {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TaskMoodle> cq = cb.createQuery(TaskMoodle.class);
         Root<TaskMoodle> root = cq.from(TaskMoodle.class);
-        cq.where(cb.notEqual(root.get("id"), 1L));
+        cq.where(filter(cb, root));
         return entityManager.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<TaskMoodle> findForTheDay() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TaskMoodle> cq = cb.createQuery(TaskMoodle.class);
+        Root<TaskMoodle> root = cq.from(TaskMoodle.class);
+        Predicate time = cb.lessThan(cb.diff((new Date().getTime() / 1000), root.get("modified")), 88200L);
+        cq.where(cb.and(filter(cb, root), time));
+        return entityManager.createQuery(cq).getResultList();
+    }
+
+    private Predicate filter(CriteriaBuilder cb, Root<TaskMoodle> root) {
+        Predicate predicate = cb.conjunction();
+        Predicate filter = cb.notEqual(root.get("id"), 1L);
+        return cb.and(predicate, filter);
     }
 }

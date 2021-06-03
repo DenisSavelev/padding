@@ -9,4 +9,5 @@ public interface CompetenceDAO {
     Optional<Competence> getById(Long id);
     List<Competence> saveAll(List<Competence> competences);
     List<CompetenceMoodle> findAll();
+    List<CompetenceMoodle> findForTheDay();
 }

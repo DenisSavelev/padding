@@ -8,4 +8,5 @@ import java.util.List;
 public interface JournalDAO {
     List<Journal> saveAll(List<Journal> journals);
     List<JournalMoodle> findAll();
+    List<JournalMoodle> findForTheDay();
 }

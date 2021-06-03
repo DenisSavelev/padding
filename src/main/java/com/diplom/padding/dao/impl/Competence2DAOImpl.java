@@ -18,7 +18,7 @@ public class Competence2DAOImpl implements Competence2DAO {
     private final Competence3Repository repositoryApp2;
 
     @Autowired
-    public Competence2DAOImpl(@Qualifier("mySQLEntityManager") EntityManager em, Competence2Repository repositoryApp,
+    public Competence2DAOImpl(@Qualifier("mySQLEntityManager")EntityManager em, Competence2Repository repositoryApp,
                               Competence3Repository repositoryApp2) {
         this.em = em;
         this.repositoryApp = repositoryApp;
@@ -53,6 +53,26 @@ public class Competence2DAOImpl implements Competence2DAO {
     @Override
     public List<CompetenceMoodle2> findAllCompetence3() {
         return getCompetenceByLevel(false);
+    }
+
+    @Override
+    public List<CompetenceMoodle2> findCompetence2ForTheDay() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<CompetenceMoodle2> cq = cb.createQuery(CompetenceMoodle2.class);
+        Root<CompetenceMoodle2> root = cq.from(CompetenceMoodle2.class);
+        Predicate time = cb.lessThan(cb.diff((new Date().getTime() / 1000), root.get("modified")), 88200L);
+        cq.where(cb.and(time, cb.equal(root.get("idParent"), 0)));
+        return em.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<CompetenceMoodle2> findCompetence3ForTheDay() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<CompetenceMoodle2> cq = cb.createQuery(CompetenceMoodle2.class);
+        Root<CompetenceMoodle2> root = cq.from(CompetenceMoodle2.class);
+        Predicate time = cb.lessThan(cb.diff((new Date().getTime() / 1000), root.get("modified")), 88200L);
+        cq.where(cb.and(time, cb.notEqual(root.get("idParent"), 0)));
+        return em.createQuery(cq).getResultList();
     }
 
     private List<CompetenceMoodle2> getCompetenceByLevel(boolean isTwo) {

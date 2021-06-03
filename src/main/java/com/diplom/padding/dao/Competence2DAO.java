@@ -12,4 +12,6 @@ public interface Competence2DAO {
     List<Competence3> saveAllCompetence3(List<Competence3> competences);
     List<CompetenceMoodle2> findAllCompetence2();
     List<CompetenceMoodle2> findAllCompetence3();
+    List<CompetenceMoodle2> findCompetence2ForTheDay();
+    List<CompetenceMoodle2> findCompetence3ForTheDay();
 }

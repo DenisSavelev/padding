@@ -9,7 +9,7 @@ import com.diplom.padding.repositories.app.FileRepository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class FileDAOImpl implements FileDAO {
@@ -45,6 +45,16 @@ public class FileDAOImpl implements FileDAO {
         CriteriaQuery<FileMoodle> cq = cb.createQuery(FileMoodle.class);
         Root<FileMoodle> root = cq.from(FileMoodle.class);
         cq.where(filter(cb, root));
+        return entityManager.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<FileMoodle> findForTheDay() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<FileMoodle> cq = cb.createQuery(FileMoodle.class);
+        Root<FileMoodle> root = cq.from(FileMoodle.class);
+        Predicate time = cb.lessThan(cb.diff((new Date().getTime() / 1000), root.get("modified")), 88200L);
+        cq.where(cb.and(filter(cb, root), time));
         return entityManager.createQuery(cq).getResultList();
     }
 

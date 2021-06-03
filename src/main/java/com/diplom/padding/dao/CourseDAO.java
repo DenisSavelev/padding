@@ -9,4 +9,5 @@ public interface CourseDAO {
     Optional<Course> getById(Long id);
     List<Course> saveAll(List<Course> courses);
     List<CourseMoodle> findAll();
+    List<CourseMoodle> findForTheDay();
 }

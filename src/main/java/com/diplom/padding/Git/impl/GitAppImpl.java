@@ -1,28 +1,22 @@
 package com.diplom.padding.Git.impl;
 
+import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.lib.*;
+import org.eclipse.jgit.transport.*;
 import com.diplom.padding.Git.GitApp;
 import com.diplom.padding.model.GitModel;
-import org.eclipse.jgit.api.*;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.*;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.RefSpec;
-import org.eclipse.jgit.transport.URIish;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.stereotype.Service;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.multipart.MultipartFile;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 @Service
 public class GitAppImpl implements GitApp {
-    int i = 1;
+    private int i = 1;
 
     public void createRepo(MultipartFile src) throws IOException, GitAPIException {
         Repository repo = new FileRepositoryBuilder().readEnvironment().findGitDir(convertMultiPartToFile(src)).build();
@@ -77,7 +71,7 @@ public class GitAppImpl implements GitApp {
     }
     public void gitCommit(Git git) throws GitAPIException {
         CommitCommand commit = git.commit();
-        i = i+1;
+        i = i + 1;
         commit.setMessage("commit-"+i).call();
     }
 
@@ -131,9 +125,9 @@ public class GitAppImpl implements GitApp {
         } catch (IOException e) {
             System.out.println("Exception while moving file: " + e.getMessage());
         }
-        if(result != null) {
+        if (result != null) {
             System.out.println("File moved successfully.");
-        }else{
+        } else {
             System.out.println("File movement failed.");
         }
     }

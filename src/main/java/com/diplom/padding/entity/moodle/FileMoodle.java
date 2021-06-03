@@ -11,8 +11,14 @@ public class FileMoodle {
     private String contentHash;
     @Column(name = "filename")
     private String name;
+    @Column(name = "itemid")
+    private Long idTask;
     @Column(name = "userid")
     private Long idUser;
+    @Column(name = "component")
+    private String component;
+    @Column(name = "author")
+    private String author;
     @Column(name = "timemodified")
     private Long modified;
 

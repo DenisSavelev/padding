@@ -105,12 +105,9 @@ public class MainService {
         List<Journal> journals = new ArrayList<>();
         journalDAO.findAll().parallelStream().forEach(journalMoodle ->
                 userDAO.getById(journalMoodle.getIdUser()).ifPresent(user ->
-                        taskDAO.getById(journalMoodle.getIdTask()).ifPresent(task -> {
-                            List<File> fileList = new ArrayList<>();
-                            fileDAO.getIdByUserAndTask(journalMoodle.getIdUser(), journalMoodle.getIdTask())
-                                    .parallelStream().forEach(id -> fileDAO.getById(id).ifPresent(fileList::add));
-                            journals.add(new Journal(journalMoodle, user, task, fileList));
-                        })));
+                        taskDAO.getById(journalMoodle.getIdTask()).ifPresent(task ->
+                            journals.add(new Journal(journalMoodle, user, task,
+                                    fileDAO.getByUserAndTask(journalMoodle.getIdUser(), journalMoodle.getIdTask()))))));
         journalDAO.saveAll(journals);
     }
 

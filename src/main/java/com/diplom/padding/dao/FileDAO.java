@@ -3,10 +3,10 @@ package com.diplom.padding.dao;
 import com.diplom.padding.entity.app.File;
 import com.diplom.padding.entity.moodle.FileMoodle;
 
-import java.util.*;
+import java.util.List;
 
 public interface FileDAO {
-    Optional<File> getById(Long id);
+    List<File> getByUserAndTask(Long idUser, Long idTask);
     List<File> saveAll(List<File> files);
     List<FileMoodle> findAll();
     List<Long> getIdByUserAndTask(Long idUser, Long idTask);

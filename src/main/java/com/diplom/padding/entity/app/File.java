@@ -17,7 +17,7 @@ public class File {
     public File(FileMoodle fileMoodle) {
         this.id = fileMoodle.getId();
         this.title = fileMoodle.getName();
-        this.path = fileMoodle.getContenthash().substring(0, 2) + "/" + fileMoodle.getContenthash().substring(2, 4);
+        this.path = fileMoodle.getContentHash().substring(0, 2) + "/" + fileMoodle.getContentHash().substring(2, 4);
     }
 
     public Long getId() {

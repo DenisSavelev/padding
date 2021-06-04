@@ -49,7 +49,7 @@ public class GitAppImpl implements GitApp {
     return existingRepo;
     }
 
-    public Git gitClone(GitModel gitModel, MultipartFile src) throws GitAPIException, IOException, URISyntaxException {
+    public Git gitClone(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
         String dest = "~/local";
         Git git = Git.cloneRepository()
                 .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")
@@ -60,9 +60,9 @@ public class GitAppImpl implements GitApp {
 
         String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
         createBranch(git, branch);
-        Path to = Paths.get(dest+"/"+src.getOriginalFilename());
-        src.transferTo(to);
-        gitAdd(git, convertMultiPartToFile(src).getName());
+        Path to = Paths.get(dest+"/"+gitModel.getOrigName());
+        File copy = new File(to.toString());
+        gitAdd(git, gitModel.getFile().getName());
         gitCommit(git);
         gitPush(git, gitModel.getDiscipline());
         return git;

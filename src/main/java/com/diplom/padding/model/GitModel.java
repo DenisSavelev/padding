@@ -1,35 +1,23 @@
 package com.diplom.padding.model;
+import com.diplom.padding.entity.app.Journal;
+
+import java.io.File;
 
 public class GitModel {
     private String userName;
     private String discipline;
     private String taskName;
-    private int score; //5,4,3 оценка 0 не зачтено/1 зачтено
+    private File file;
+    private String origName;
+    private Float score; //5,4,3 оценка 0 не зачтено/1 зачтено
 
-    public GitModel() {
-    }
-
-    public GitModel(String userName, String discipline, String taskName, int score) {
-        this.userName = userName;
-        this.discipline = discipline;
-        this.taskName = taskName;
-        this.score = score;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public String getTaskName() {
-        return taskName;
-    }
-
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
+    public GitModel(Journal journal, File file) {
+        this.userName = journal.getUser().getSurname() + " " + journal.getUser().getName();
+        this.discipline = "IIE"; //journal.getTask().getCourse().getShortName();
+        this.taskName = journal.getTask().getName();
+        this.file = file;
+        this.origName = journal.getFiles().get(0).getTitle();
+        this.score = journal.getRating();
     }
 
     public String getUserName() {
@@ -46,5 +34,37 @@ public class GitModel {
 
     public void setDiscipline(String discipline) {
         this.discipline = discipline;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public String getOrigName() {
+        return origName;
+    }
+
+    public void setOrigName(String origName) {
+        this.origName = origName;
+    }
+
+    public Float getScore() {
+        return score;
+    }
+
+    public void setScore(Float score) {
+        this.score = score;
     }
 }

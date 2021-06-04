@@ -17,18 +17,19 @@ import java.nio.file.*;
 @Service
 public class GitAppImpl implements GitApp {
     private int i = 1;
+    MultipartFile multipartFile = (MultipartFile) new File("~/local");
 
-    public void createRepo(MultipartFile src) throws IOException, GitAPIException {
-        Repository repo = new FileRepositoryBuilder().readEnvironment().findGitDir(convertMultiPartToFile(src)).build();
-        Git git = new Git(repo);
-        CreateBranchCommand bcc = git.branchCreate();
-        CheckoutCommand checkout = git.checkout();
-        String branchName = "branch" + (int) (Math.random() * 100);
-        bcc.setName(branchName)
-                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM)
-                .setForce(true)
-                .call();
-        checkout.setName(branchName).call();
+    public void createRepo(String discipline) throws IOException, GitAPIException, URISyntaxException {
+        Git git = Git.init().setDirectory(new File("~/local/.git")).call();
+        git.getRepository().getRemoteName(discipline);
+        RemoteAddCommand remoteAddCommand = git.remoteAdd();
+        remoteAddCommand.setName("refs/heads/master");
+        remoteAddCommand.setUri(new URIish("http://192.168.0.104/root/")); //дописать имя репозитоиря соответсвующего дисциплине
+        remoteAddCommand.call();
+        PushCommand push = git.push();
+        push.setCredentialsProvider(new UsernamePasswordCredentialsProvider("root", "root1234"));
+        push.call();
+
     }
 
     public void createBranch(Git git, String branchName) throws GitAPIException {
@@ -55,6 +56,8 @@ public class GitAppImpl implements GitApp {
                 .setBranch("master")
                 .setDirectory(new File(dest))
                 .call();
+        File file = new File("~/local/"+gitModel.getDiscipline());
+
         String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
         createBranch(git, branch);
         Path to = Paths.get(dest+"/"+src.getOriginalFilename());

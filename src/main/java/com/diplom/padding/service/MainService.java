@@ -1,16 +1,24 @@
 package com.diplom.padding.service;
 
+import com.diplom.padding.Git.GitApp;
 import com.diplom.padding.dao.*;
 import com.diplom.padding.entity.app.*;
 import com.diplom.padding.entity.moodle.*;
+import com.diplom.padding.model.GitModel;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 
 @Service
 public class MainService {
+    private final GitApp git;
     private final RoleDAO roleDAO;
     private final UserDAO userDAO;
     private final TaskDAO taskDAO;
@@ -30,9 +38,8 @@ public class MainService {
     }*/
 
     @Autowired
-    public MainService(RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO, JournalDAO journalDAO,
-                       CompetenceDAO competenceDAO, Competence2DAO competence2DAO,
-                       CourseTaskMoodleDAO courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
+    public MainService(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO, JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
+        this.git = git;
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
@@ -45,9 +52,9 @@ public class MainService {
         this.courseTaskCompetenceMoodleDAO = courseTaskCompetenceMoodleDAO;
     }
 
-    //@PostConstruct
+    @PostConstruct
     public void startDate() {
-        List<Role> roles = new ArrayList<>();
+ /*       List<Role> roles = new ArrayList<>();
         String[] title = new String[] {"Admin", "Teacher", "Student", "ManagerCompetency"};
         for(byte i = 0; i < 4; i++) {
            roles.add(new Role((byte) (i+1), title[i]));
@@ -108,7 +115,20 @@ public class MainService {
                         taskDAO.getById(journalMoodle.getIdTask()).ifPresent(task ->
                             journals.add(new Journal(journalMoodle, user, task,
                                     fileDAO.getByUserAndTask(journalMoodle.getIdUser(), journalMoodle.getIdTask()))))));
-        journalDAO.saveAll(journals);
+        journalDAO.saveAll(journals);*/
+        List<Journal> journals = journalDAO.findAllJournal();
+        List<File> files = new ArrayList<>();
+        journals.forEach(journal -> {
+            if (fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).size() > 0) {
+                com.diplom.padding.entity.app.File fil = fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).get(0);
+                String path = "/var/www/moodledata/filedir/" + fil.getPath() + "/" + fil.getHash();
+                try {
+                    git.gitClone(new GitModel(journal, new File(path)));
+                } catch (GitAPIException | URISyntaxException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private String parse(String description) {

@@ -28,6 +28,11 @@ public class JournalDAOImpl implements JournalDAO {
     }
 
     @Override
+    public List<Journal> findAllJournal() {
+        return repositoryApp.findAll();
+    }
+
+    @Override
     public List<JournalMoodle> findAll() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<JournalMoodle> cq = cb.createQuery(JournalMoodle.class);

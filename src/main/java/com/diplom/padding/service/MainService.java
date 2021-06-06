@@ -3,14 +3,19 @@ package com.diplom.padding.service;
 import com.diplom.padding.dao.*;
 import com.diplom.padding.Git.GitApp;
 import com.diplom.padding.entity.app.*;
+import com.diplom.padding.model.GitModel;
 import com.diplom.padding.entity.moodle.*;
 import org.springframework.stereotype.Service;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.net.URISyntaxException;
+import javax.annotation.PostConstruct;
 
 @Service
 public class MainService {
@@ -30,13 +35,25 @@ public class MainService {
     public void exportData() {
         SimpleDateFormat hour = new SimpleDateFormat("HH");
         if (hour.format(new Date()).equals("05")) {
+            List<Journal> allJournal = journalDAO.findAllJournal();
+            allJournal.forEach(journal -> {
+                if (fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).size() > 0) {
+                    com.diplom.padding.entity.app.File fil = fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).get(0);
+                    String path = "/var/www/moodledata/filedir/" + fil.getPath() + "/" + fil.getHash();
+                    try {
+                        git.gitClone(new GitModel(journal, new File(path)));
+                    } catch (GitAPIException | URISyntaxException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 
     @Autowired
     public MainService(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
-                       JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO,
-                       CourseTaskMoodleDAO courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
+                       JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO
+                                   courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
         this.git = git;
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
@@ -50,7 +67,7 @@ public class MainService {
         this.courseTaskCompetenceMoodleDAO = courseTaskCompetenceMoodleDAO;
     }
 
-    //@PostConstruct
+    @PostConstruct
     public void startDate() {
         List<Role> roles = new ArrayList<>();
         String[] title = new String[] {"Admin", "Teacher", "Student", "ManagerCompetency"};
@@ -63,8 +80,8 @@ public class MainService {
         userDAO.findAll().forEach(userMoodle -> users.add(new User(userMoodle)));
         userDAO.saveAll(users);
 
-        List<File> files = new ArrayList<>();
-        fileDAO.findAll().parallelStream().forEach(file -> files.add(new File(file)));
+        List<com.diplom.padding.entity.app.File> files = new ArrayList<>();
+        fileDAO.findAll().parallelStream().forEach(file -> files.add(new com.diplom.padding.entity.app.File(file)));
         fileDAO.saveAll(files);
 
         List<Course> courses = new ArrayList<>();

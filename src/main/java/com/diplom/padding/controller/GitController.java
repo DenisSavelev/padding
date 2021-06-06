@@ -25,21 +25,21 @@ public class GitController {
     @PostMapping(value="/upload")
     public @ResponseBody
     ResponseEntity<String> fileUpload(@RequestParam("file") MultipartFile file, GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
-        gitApp.gitClone(gitModel, file);
+        //gitApp.gitClone(gitModel, file);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(value="/merge")
     public @ResponseBody
     ResponseEntity<String> initMerge(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
-        gitApp.gitMerge(gitModel);
+      //  gitApp.gitMerge(gitModel);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping(value="/delete")
+    @PostMapping(value="/create")
     public @ResponseBody
-    ResponseEntity<String> deleteBranch(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
-        //gitApp.deleteBranch(gitModel);
+    ResponseEntity<String> deleteBranch(String discipline) throws GitAPIException, IOException, URISyntaxException {
+      //  gitApp.createRepo(discipline);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -18,12 +18,23 @@ import java.nio.file.*;
 public class GitAppImpl implements GitApp {
     private int i = 1;
 
-    public void createRepo(MultipartFile src) throws IOException, GitAPIException {
-        Repository repo = new FileRepositoryBuilder().readEnvironment().findGitDir(convertMultiPartToFile(src)).build();
-        Git git = new Git(repo);
+    @Override
+    public void createRepo(String discipline) throws IOException, GitAPIException, URISyntaxException {
+        Git git = Git.init().setDirectory(new File("~/local/.git")).call();
+        git.getRepository().getRemoteName(discipline);
+        RemoteAddCommand remoteAddCommand = git.remoteAdd();
+        remoteAddCommand.setName("refs/heads/master");
+        remoteAddCommand.setUri(new URIish("http://192.168.0.104/root/")); //дописать имя репозитоиря соответсвующего дисциплине
+        remoteAddCommand.call();
+        PushCommand push = git.push();
+        push.setCredentialsProvider(new UsernamePasswordCredentialsProvider("root", "root1234"));
+        push.call();
+
+    }
+
+    private void createBranch(Git git, String branchName) throws GitAPIException {
         CreateBranchCommand bcc = git.branchCreate();
         CheckoutCommand checkout = git.checkout();
-        String branchName = "branch" + (int) (Math.random() * 100);
         bcc.setName(branchName)
                 .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM)
                 .setForce(true)
@@ -31,60 +42,59 @@ public class GitAppImpl implements GitApp {
         checkout.setName(branchName).call();
     }
 
-    public void createBranch(Git git, String branchName) throws GitAPIException {
-        CreateBranchCommand bcc = git.branchCreate();
-        CheckoutCommand checkout = git.checkout();
-        bcc.setName(branchName)
-                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM)
-                .setForce(true)
-                .call();
-        checkout.setName(branchName).call();
-    }
-
+    @Override
     public Repository openRepo(MultipartFile multipartFile) throws IOException {
-    Repository existingRepo = new FileRepositoryBuilder()
-            .setGitDir(new File("~/" + multipartFile))
-            .build();
-    return existingRepo;
+        return new FileRepositoryBuilder()
+                .setGitDir(new File("~/" + multipartFile))
+                .build();
     }
 
-    public Git gitClone(GitModel gitModel, MultipartFile src) throws GitAPIException, IOException, URISyntaxException {
+    @Override
+    public Git gitClone(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
         String dest = "~/local";
         Git git = Git.cloneRepository()
-                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")
+                .setURI("http://192.168.0.104/root/" + gitModel.getDiscipline() + ".git")
                 .setBranch("master")
                 .setDirectory(new File(dest))
                 .call();
-        String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
+        String branch = gitModel.getTaskName().replaceAll(" ", "") + "/"
+                + gitModel.getUserName().replaceAll(" ", "");
         createBranch(git, branch);
-        Path to = Paths.get(dest+"/"+src.getOriginalFilename());
-        src.transferTo(to);
-        gitAdd(git, convertMultiPartToFile(src).getName());
+        Path to = Paths.get(dest + "/" + gitModel.getOrigName());
+        File copy = new File(to.toString());
+        Files.copy(gitModel.getFile().toPath(), copy.toPath());
+        gitAdd(git, copy.getName());
         gitCommit(git);
         gitPush(git, gitModel.getDiscipline());
         return git;
 
     }
+
+    @Override
     public void gitAdd(Git git, String to) throws GitAPIException {
         AddCommand add = git.add();
         add.addFilepattern(to).call();
     }
+
+    @Override
     public void gitCommit(Git git) throws GitAPIException {
         CommitCommand commit = git.commit();
         i = i + 1;
-        commit.setMessage("commit-"+i).call();
+        commit.setMessage("commit-" + i).call();
     }
 
+    @Override
     public void gitPush(Git git, String nameDiscipline) throws GitAPIException, URISyntaxException {
         RemoteAddCommand remoteAddCommand = git.remoteAdd();
         remoteAddCommand.setName("origin");
-        remoteAddCommand.setUri(new URIish("http://192.168.0.104/root/"+ nameDiscipline + ".git")); //дописать имя репозитоиря соответсвующего дисциплине
+        remoteAddCommand.setUri(new URIish("http://192.168.0.104/root/" + nameDiscipline + ".git")); //дописать имя репозитоиря соответсвующего дисциплине
         remoteAddCommand.call();
         PushCommand push = git.push();
         push.setCredentialsProvider(new UsernamePasswordCredentialsProvider("root", "root1234"));
         push.call();
     }
 
+    @Override
     public void deleteBranch(Git git, GitModel gitModel) throws GitAPIException, URISyntaxException {
         String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
         RefSpec refSpec = new RefSpec()
@@ -96,15 +106,16 @@ public class GitAppImpl implements GitApp {
                 .setRemote("origin").call();
     }
 
+    @Override
     public void gitMerge(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
         String dest = "~/local";
         String branch = gitModel.getTaskName().replaceAll(" ", "") +"/"+gitModel.getUserName().replaceAll(" ", "");
         Git git = Git.cloneRepository()
-                .setURI("http://192.168.0.104/root/"+ gitModel.getDiscipline() +".git")
+                .setURI("http://192.168.0.104/root/" + gitModel.getDiscipline() +".git")
                 .setBranch("master")
                 .setDirectory(new File(dest))
                 .call();
-        ObjectId objectId = git.getRepository().resolve("origin/"+ branch);
+        ObjectId objectId = git.getRepository().resolve("origin/" + branch);
         git.merge().setCommit(true).include(objectId).call();
         deleteBranch(git, gitModel);
         gitPush(git, gitModel.getDiscipline());

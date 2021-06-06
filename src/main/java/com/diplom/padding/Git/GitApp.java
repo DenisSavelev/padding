@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 public interface GitApp {
-    void createRepo(MultipartFile src) throws IOException, GitAPIException;
+    void createRepo(String discipline) throws IOException, GitAPIException, URISyntaxException;
     Repository openRepo(MultipartFile multipartFile) throws IOException;
-    Git gitClone(GitModel gitModel, MultipartFile src) throws GitAPIException, IOException, URISyntaxException;
+    Git gitClone(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException;
     void gitAdd(Git git, String to) throws GitAPIException;
     void gitCommit(Git git) throws GitAPIException;
     void gitPush(Git git, String nameDiscipline) throws GitAPIException, URISyntaxException;

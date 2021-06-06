@@ -9,12 +9,12 @@ import java.util.List;
 public class Journal {
     @Id
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Task task;
     private Float rating;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<File> files;
 
     public Journal() {

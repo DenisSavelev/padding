@@ -10,6 +10,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.io.File;
 import java.io.IOException;
@@ -120,9 +122,9 @@ public class MainService {
         if (hour.format(new Date()).equals("05")) {
             List<Journal> allJournal = journalDAO.findAllJournal();
             allJournal.forEach(journal -> {
-                if (fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).size() > 0) {
-                    com.diplom.padding.entity.app.File fil = fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).get(0);
-                    String path = "/var/www/moodledata/filedir/" + fil.getPath() + "/" + fil.getHash();
+                if (journal.getFiles().size() > 0) {
+                    com.diplom.padding.entity.app.File file = journal.getFiles().get(0);
+                    String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
                     try {
                         git.gitClone(new GitModel(journal, new File(path)));
                     } catch (GitAPIException | URISyntaxException | IOException e) {

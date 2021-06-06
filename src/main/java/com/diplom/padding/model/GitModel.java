@@ -12,7 +12,7 @@ public class GitModel {
     private final Float score; //5,4,3 оценка 0 не зачтено/1 зачтено
 
     public GitModel(Journal journal, File file) {
-        this.userName = journal.getUser().getSurname() + " " + journal.getUser().getName();
+        this.userName = journal.getUser().getSurname() + journal.getUser().getName();
         this.discipline = "PTEK"; //journal.getTask().getCourse().getShortName();
         this.taskName = journal.getTask().getName();
         this.file = file;

@@ -31,25 +31,6 @@ public class MainService {
     private final CourseTaskMoodleDAO courseTaskMoodleDAO;
     private final CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO;
 
-    @Scheduled(fixedDelay = 3600000)
-    public void exportData() {
-        SimpleDateFormat hour = new SimpleDateFormat("HH");
-        if (hour.format(new Date()).equals("05")) {
-            List<Journal> allJournal = journalDAO.findAllJournal();
-            allJournal.forEach(journal -> {
-                if (fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).size() > 0) {
-                    com.diplom.padding.entity.app.File fil = fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).get(0);
-                    String path = "/var/www/moodledata/filedir/" + fil.getPath() + "/" + fil.getHash();
-                    try {
-                        git.gitClone(new GitModel(journal, new File(path)));
-                    } catch (GitAPIException | URISyntaxException | IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    }
-
     @Autowired
     public MainService(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
                        JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO
@@ -68,7 +49,7 @@ public class MainService {
     }
 
     @PostConstruct
-    public void startDate() {
+    public void findAllDate() {
         List<Role> roles = new ArrayList<>();
         String[] title = new String[] {"Admin", "Teacher", "Student", "ManagerCompetency"};
         for(byte i = 0; i < 4; i++) {
@@ -131,6 +112,25 @@ public class MainService {
                             journals.add(new Journal(journalMoodle, user, task,
                                     fileDAO.getByUserAndTask(journalMoodle.getIdUser(), journalMoodle.getIdTask()))))));
         journalDAO.saveAll(journals);
+    }
+
+    @Scheduled(fixedDelay = 3600000)
+    public void exportData() {
+        SimpleDateFormat hour = new SimpleDateFormat("HH");
+        if (hour.format(new Date()).equals("05")) {
+            List<Journal> allJournal = journalDAO.findAllJournal();
+            allJournal.forEach(journal -> {
+                if (fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).size() > 0) {
+                    com.diplom.padding.entity.app.File fil = fileDAO.getByUserAndTask(journal.getUser().getId(), journal.getTask().getId()).get(0);
+                    String path = "/var/www/moodledata/filedir/" + fil.getPath() + "/" + fil.getHash();
+                    try {
+                        git.gitClone(new GitModel(journal, new File(path)));
+                    } catch (GitAPIException | URISyntaxException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     private String parse(String description) {

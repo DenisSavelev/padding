@@ -51,7 +51,9 @@ public class MainService {
     }
 
     @Autowired
-    public MainService(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO, JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
+    public MainService(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
+                       JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO
+                                   courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
         this.git = git;
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;

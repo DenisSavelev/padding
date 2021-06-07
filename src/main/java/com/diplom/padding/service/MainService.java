@@ -10,14 +10,14 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.io.File;
+import java.nio.file.*;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.net.URISyntaxException;
 import javax.annotation.PostConstruct;
+import java.nio.file.attribute.BasicFileAttributes;
 
 @Service
 public class MainService {
@@ -126,10 +126,30 @@ public class MainService {
                     com.diplom.padding.entity.app.File file = journal.getFiles().get(0);
                     String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
                     try {
+                        deleteDirectory();
                         git.gitClone(new GitModel(journal, new File(path)));
                     } catch (GitAPIException | URISyntaxException | IOException e) {
                         e.printStackTrace();
                     }
+                }
+            });
+        }
+    }
+
+    private void deleteDirectory() throws IOException {
+        Path directory = Paths.get("~/");
+        if (Files.exists(directory)) {
+            Files.walkFileTree(directory, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                    Files.delete(path);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path directory, IOException ioException) throws IOException {
+                    Files.delete(directory);
+                    return FileVisitResult.CONTINUE;
                 }
             });
         }

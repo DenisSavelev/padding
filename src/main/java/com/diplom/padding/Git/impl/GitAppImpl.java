@@ -19,15 +19,15 @@ import java.nio.file.*;
 public class GitAppImpl implements GitApp {
     private int i = 1;
     @Value("${spring.cloud.config.server.git.username}")
-    private static String USERNAME;
+    private String USERNAME;
     @Value("${spring.cloud.config.server.git.password}")
-    private static String PASSWORD;
+    private String PASSWORD;
     @Value("${spring.cloud.config.server.git.uri}")
-    private static String URI;
+    private String URI;
 
     @Override
     public void createRepo(String discipline) throws GitAPIException, URISyntaxException {
-        Git git = Git.init().setDirectory(new File("~/local/.git")).call();
+        Git git = Git.init().setDirectory(new File("~/local")).call();
         git.getRepository().getRemoteName(discipline);
         RemoteAddCommand remoteAddCommand = git.remoteAdd();
         remoteAddCommand.setName("refs/heads/master");
@@ -36,7 +36,6 @@ public class GitAppImpl implements GitApp {
         PushCommand push = git.push();
         push.setCredentialsProvider(new UsernamePasswordCredentialsProvider(USERNAME, PASSWORD));
         push.call();
-
     }
 
     private void createBranch(Git git, String branchName) throws GitAPIException {
@@ -77,7 +76,7 @@ public class GitAppImpl implements GitApp {
     }
 
     @Override
-    public void deleteBranch(Git git, GitModel gitModel) throws GitAPIException, URISyntaxException {
+    public void deleteBranch(Git git, GitModel gitModel) throws GitAPIException {
         String branch = gitModel.getTaskName().replaceAll(" ", "") + "/"+gitModel.getUserName().replaceAll(" ", "");
         RefSpec refSpec = new RefSpec()
                 .setSource(null)
@@ -91,7 +90,8 @@ public class GitAppImpl implements GitApp {
     @Override
     public void gitMerge(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
         String dest = "~/local";
-        String branch = gitModel.getTaskName().replaceAll(" ", "") + "/"+gitModel.getUserName().replaceAll(" ", "");
+        String branch = gitModel.getTaskName().replaceAll(" ", "")
+                + "/"+gitModel.getUserName().replaceAll(" ", "");
         Git git = Git.cloneRepository()
                 .setURI(URI + gitModel.getDiscipline() + ".git")
                 .setBranch("master")

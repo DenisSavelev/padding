@@ -64,16 +64,16 @@ public class MainService {
         userDAO.saveAll(users);
 
         List<com.diplom.padding.entity.app.File> files = new ArrayList<>();
-        fileDAO.findAll().parallelStream().forEach(file -> files.add(new com.diplom.padding.entity.app.File(file)));
+        fileDAO.findAll().forEach(file -> files.add(new com.diplom.padding.entity.app.File(file)));
         fileDAO.saveAll(files);
 
         List<Course> courses = new ArrayList<>();
-        courseDAO.findAll().parallelStream().forEach(courseMoodle -> courses.add(new Course(courseMoodle)));
+        courseDAO.findAll().forEach(courseMoodle -> courses.add(new Course(courseMoodle)));
         courseDAO.saveAll(courses);
 
         List<Competence> competences = new ArrayList<>();
         List<CompetenceMoodle> competenceMs = competenceDAO.findAll();
-        competenceMs.parallelStream().forEach(competenceM -> {
+        competenceMs.forEach(competenceM -> {
             competenceM.setDescription(parse(competenceM.getDescription()));
             competences.add(new Competence(competenceM));
         });
@@ -81,7 +81,7 @@ public class MainService {
 
         List<Competence2> competences2 = new ArrayList<>();
         List<CompetenceMoodle2> competenceMs2 = competence2DAO.findAllCompetence2();
-        competenceMs2.parallelStream().forEach(competenceM2 -> {
+        competenceMs2.forEach(competenceM2 -> {
             competenceM2.setDescription(parse(competenceM2.getDescription()));
             competenceDAO.getById(competenceM2.getIdCompetence()).ifPresent(c -> competences2.add(new Competence2(competenceM2, c)));
         });
@@ -89,14 +89,14 @@ public class MainService {
 
         List<Competence3> competences3 = new ArrayList<>();
         List<CompetenceMoodle2> competenceMs3 = competence2DAO.findAllCompetence3();
-        competenceMs3.parallelStream().forEach(competenceM3 -> {
+        competenceMs3.forEach(competenceM3 -> {
             competenceM3.setDescription(parse(competenceM3.getDescription()));
             competence2DAO.getCompetence2ById(competenceM3.getIdParent()).ifPresent(c -> competences3.add(new Competence3(competenceM3, c)));
         });
         competence2DAO.saveAllCompetence3(competences3);
 
         List<Task> tasks = new ArrayList<>();
-        taskDAO.findAll().parallelStream().forEach(taskMoodle ->
+        taskDAO.findAll().forEach(taskMoodle ->
                 courseTaskMoodleDAO.getIdByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getIdCourse()).forEach(cmid -> {
             List<Competence2> competence2s = new ArrayList<>();
             List<Competence3> competence3s = new ArrayList<>();
@@ -109,11 +109,11 @@ public class MainService {
         taskDAO.saveAll(tasks);
 
         List<Journal> journals = new ArrayList<>();
-        journalDAO.findAll().parallelStream().forEach(journalMoodle ->
-                userDAO.getById(journalMoodle.getIdUser()).ifPresent(user ->
-                        taskDAO.getById(journalMoodle.getIdTask()).ifPresent(task ->
+        journalDAO.findAll().forEach(journalMoodle ->
+            userDAO.getById(journalMoodle.getIdUser()).ifPresent(user ->
+                    taskDAO.getById(journalMoodle.getIdTask()).ifPresent(task ->
                             journals.add(new Journal(journalMoodle, user, task,
-                                    fileDAO.getByUserAndTask(journalMoodle.getIdUser(), journalMoodle.getIdTask()))))));
+                                    task.getType().equals("assign") ? fileDAO.getByItemAndUser(taskDAO.getIdFilesByIdTask(task.getId()), user.getId()) : null)))));
         journalDAO.saveAll(journals);
     }
 

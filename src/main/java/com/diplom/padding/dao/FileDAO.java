@@ -6,7 +6,7 @@ import com.diplom.padding.entity.moodle.FileMoodle;
 import java.util.List;
 
 public interface FileDAO {
-    List<File> getByUserAndTask(Long idUser, Long idTask);
+    List<File> getByItemAndUser(List<Long> idItem, Long idUser);
     List<File> saveAll(List<File> files);
     List<FileMoodle> findAll();
     List<FileMoodle> findForTheDay();

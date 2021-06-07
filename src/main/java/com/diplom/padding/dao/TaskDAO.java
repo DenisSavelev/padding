@@ -10,4 +10,5 @@ public interface TaskDAO {
     List<Task> saveAll(List<Task> tasks);
     List<TaskMoodle> findAll();
     List<TaskMoodle> findForTheDay();
+    List<Long> getIdFilesByIdTask(Long idTask);
 }

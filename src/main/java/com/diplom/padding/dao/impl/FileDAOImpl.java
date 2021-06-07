@@ -26,11 +26,11 @@ public class FileDAOImpl implements FileDAO {
     }
 
     @Override
-    public List<File> getByUserAndTask(Long idUser, Long idTask) {
+    public List<File> getByItemAndUser(List<Long> idItem, Long idUser) {
         CriteriaBuilder cb = manager.getCriteriaBuilder();
         CriteriaQuery<File> cq = cb.createQuery(File.class);
         Root<File> root = cq.from(File.class);
-        cq.where(root.get("id").in(getIdByUserAndTask(idUser, idTask)));
+        cq.where(root.get("id").in(getIdFiles(idItem, idUser)));
         return manager.createQuery(cq).getResultList();
     }
 
@@ -58,17 +58,6 @@ public class FileDAOImpl implements FileDAO {
         return entityManager.createQuery(cq).getResultList();
     }
 
-    private List<Long> getIdByUserAndTask(Long idUser, Long idTask) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        Root<FileMoodle> root = cq.from(FileMoodle.class);
-        Predicate predicate = cb.conjunction();
-        Predicate id = cb.and(cb.equal(root.get("idUser"), idUser), cb.equal(root.get("idTask"), idTask));
-        predicate = cb.and(predicate, id);
-        cq.select(root.get("id")).where(cb.and(filter(cb, root), predicate));
-        return entityManager.createQuery(cq).getResultList();
-    }
-
     private Predicate filter(CriteriaBuilder cb, Root<FileMoodle> root) {
         Predicate predicate = cb.conjunction();
         Predicate id = cb.greaterThan(root.get("idUser"), 2L);
@@ -77,5 +66,18 @@ public class FileDAOImpl implements FileDAO {
         predicate = cb.and(predicate, notNull);
         Predicate component = cb.notLike(root.get("component"), "user");
         return cb.and(predicate, component);
+    }
+
+    private List<Long> getIdFiles(List<Long> idItem, Long idUser) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<FileMoodle> root = cq.from(FileMoodle.class);
+        Predicate predicate = cb.conjunction();
+        Predicate id = cb.equal(root.get("idUser"), idUser);
+        predicate = cb.and(predicate, id);
+        Predicate area = root.get("idItem").in(idItem);
+        predicate = cb.and(predicate, area);
+        cq.select(root.get("id")).where(cb.and(filter(cb, root), predicate));
+        return entityManager.createQuery(cq).getResultList();
     }
 }

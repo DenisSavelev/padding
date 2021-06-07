@@ -96,7 +96,8 @@ public class MainService {
         competence2DAO.saveAllCompetence3(competences3);
 
         List<Task> tasks = new ArrayList<>();
-        taskDAO.findAll().parallelStream().forEach(taskMoodle -> courseTaskMoodleDAO.getIdByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getIdCourse()).forEach(cmid -> {
+        taskDAO.findAll().parallelStream().forEach(taskMoodle ->
+                courseTaskMoodleDAO.getIdByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getIdCourse()).forEach(cmid -> {
             List<Competence2> competence2s = new ArrayList<>();
             List<Competence3> competence3s = new ArrayList<>();
             courseTaskCompetenceMoodleDAO.getCompetenceByIdCourseTask(cmid).forEach(id -> {

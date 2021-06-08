@@ -74,29 +74,9 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         courseDAO.findAll().forEach(courseMoodle -> courses.add(new Course(courseMoodle)));
         courseDAO.saveAll(courses);
 
-        List<Competence> competences = new ArrayList<>();
-        List<CompetenceMoodle> competenceMs = competenceDAO.findAll();
-        competenceMs.forEach(competenceM -> {
-            competenceM.setDescription(parse(competenceM.getDescription()));
-            competences.add(new Competence(competenceM));
-        });
-        competenceDAO.saveAll(competences);
-
-        List<Competence2> competences2 = new ArrayList<>();
-        List<CompetenceMoodle2> competenceMs2 = competence2DAO.findAllCompetence2();
-        competenceMs2.forEach(competenceM2 -> {
-            competenceM2.setDescription(parse(competenceM2.getDescription()));
-            competenceDAO.getById(competenceM2.getIdCompetence()).ifPresent(c -> competences2.add(new Competence2(competenceM2, c)));
-        });
-        competence2DAO.saveAllCompetence2(competences2);
-
-        List<Competence3> competences3 = new ArrayList<>();
-        List<CompetenceMoodle2> competenceMs3 = competence2DAO.findAllCompetence3();
-        competenceMs3.forEach(competenceM3 -> {
-            competenceM3.setDescription(parse(competenceM3.getDescription()));
-            competence2DAO.getCompetence2ById(competenceM3.getIdParent()).ifPresent(c -> competences3.add(new Competence3(competenceM3, c)));
-        });
-        competence2DAO.saveAllCompetence3(competences3);
+        updateCompetence(competenceDAO.findAll());
+        updateCompetence2(competence2DAO.findAllCompetence2());
+        updateCompetence3(competence2DAO.findAllCompetence3());
 
         List<Task> tasks = new ArrayList<>();
         taskDAO.findAll().forEach(taskMoodle ->
@@ -115,6 +95,9 @@ public class ServiceMoodleImpl implements ServiceMoodle {
 
     @Scheduled(cron = "00 00 05 * * ?")
     private void exportDataForTheDay() {
+        updateCompetence(competenceDAO.findForTheDay());
+        updateCompetence2(competence2DAO.findCompetence2ForTheDay());
+        updateCompetence3(competence2DAO.findCompetence3ForTheDay());
         Queue<Journal> journals = new LinkedList<>();
         List<Journal> update = new ArrayList<>();
         getJournals(journalDAO.findForTheDay()).forEach(journal -> {
@@ -181,5 +164,32 @@ public class ServiceMoodleImpl implements ServiceMoodle {
                                 journals.add(new Journal(journalMoodle, user, task,
                                         task.getType().equals("assign") ? fileDAO.getByItemAndUser(taskDAO.getIdFilesByIdTask(task.getId()), user.getId()) : null)))));
         return journals;
+    }
+
+    private void updateCompetence(List<CompetenceMoodle> competenceMs) {
+        List<Competence> competences = new ArrayList<>();
+        competenceMs.forEach(competenceM -> {
+            competenceM.setDescription(parse(competenceM.getDescription()));
+            competences.add(new Competence(competenceM));
+        });
+        competenceDAO.saveAll(competences);
+    }
+
+    private void updateCompetence2(List<CompetenceMoodle2> competenceMs2) {
+        List<Competence2> competences2 = new ArrayList<>();
+        competenceMs2.forEach(competenceM2 -> {
+            competenceM2.setDescription(parse(competenceM2.getDescription()));
+            competenceDAO.getById(competenceM2.getIdCompetence()).ifPresent(c -> competences2.add(new Competence2(competenceM2, c)));
+        });
+        competence2DAO.saveAllCompetence2(competences2);
+    }
+
+    private void updateCompetence3(List<CompetenceMoodle2> competenceMs3) {
+        List<Competence3> competences3 = new ArrayList<>();
+        competenceMs3.forEach(competenceM3 -> {
+            competenceM3.setDescription(parse(competenceM3.getDescription()));
+            competence2DAO.getCompetence2ById(competenceM3.getIdParent()).ifPresent(c -> competences3.add(new Competence3(competenceM3, c)));
+        });
+        competence2DAO.saveAllCompetence3(competences3);
     }
 }

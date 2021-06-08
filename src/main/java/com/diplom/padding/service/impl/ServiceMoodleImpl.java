@@ -1,4 +1,4 @@
-package com.diplom.padding.service;
+package com.diplom.padding.service.impl;
 
 import com.diplom.padding.dao.*;
 import com.diplom.padding.Git.GitApp;
@@ -6,9 +6,11 @@ import com.diplom.padding.entity.app.*;
 import com.diplom.padding.model.GitModel;
 import com.diplom.padding.entity.moodle.*;
 import org.springframework.stereotype.Service;
+import com.diplom.padding.service.ServiceMoodle;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.*;
 import java.io.File;
@@ -19,7 +21,8 @@ import javax.annotation.PostConstruct;
 import java.nio.file.attribute.BasicFileAttributes;
 
 @Service
-public class MainService {
+@EnableScheduling
+public class ServiceMoodleImpl implements ServiceMoodle {
     private final GitApp git;
     private final RoleDAO roleDAO;
     private final UserDAO userDAO;
@@ -33,8 +36,8 @@ public class MainService {
     private final CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO;
 
     @Autowired
-    public MainService(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
-                       JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO
+    public ServiceMoodleImpl(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
+                             JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO
                                    courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
         this.git = git;
         this.roleDAO = roleDAO;
@@ -50,7 +53,7 @@ public class MainService {
     }
 
     @PostConstruct
-    public void findAllDate() {
+    private void findAllData() {
         List<Role> roles = new ArrayList<>();
         String[] title = new String[] {"Admin", "Teacher", "Student", "ManagerCompetency"};
         for(byte i = 0; i < 4; i++) {
@@ -110,7 +113,7 @@ public class MainService {
     }
 
     @Scheduled(cron = "0 0 5 * * ?")
-    public void exportData() {
+    private void exportDataForTheDay() {
         Queue<Journal> journals = new LinkedList<>(getJournals(journalDAO.findForTheDay()));
         List<Long> id = new ArrayList<>();
         journals.forEach(journal -> id.add(journal.getId()));

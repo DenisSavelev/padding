@@ -1,4 +1,4 @@
-package com.diplom.padding.Git;
+package com.diplom.padding.service;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public interface GitApp {
+public interface GitService {
     void createRepo(String discipline) throws IOException, GitAPIException, URISyntaxException;
     Repository openRepo(MultipartFile multipartFile) throws IOException;
     Git gitClone(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException;

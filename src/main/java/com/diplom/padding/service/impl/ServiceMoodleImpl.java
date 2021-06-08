@@ -1,8 +1,8 @@
 package com.diplom.padding.service.impl;
 
 import com.diplom.padding.dao.*;
-import com.diplom.padding.Git.GitApp;
 import com.diplom.padding.entity.app.*;
+import com.diplom.padding.service.GitService;
 import com.diplom.padding.model.GitModel;
 import com.diplom.padding.entity.moodle.*;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 @Service
 @EnableScheduling
 public class ServiceMoodleImpl implements ServiceMoodle {
-    private final GitApp git;
+    private final GitService git;
     private final RoleDAO roleDAO;
     private final UserDAO userDAO;
     private final TaskDAO taskDAO;
@@ -36,7 +36,7 @@ public class ServiceMoodleImpl implements ServiceMoodle {
     private final CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO;
 
     @Autowired
-    public ServiceMoodleImpl(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO,
+    public ServiceMoodleImpl(GitService git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO,
                              CourseDAO courseDAO, JournalDAO journalDAO, CompetenceDAO competenceDAO,
                              Competence2DAO competence2DAO, CourseTaskMoodleDAO courseTaskMoodleDAO,
                              CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {

@@ -1,10 +1,10 @@
-package com.diplom.padding.Git.impl;
+package com.diplom.padding.service.impl;
 
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.transport.*;
-import com.diplom.padding.Git.GitApp;
 import com.diplom.padding.model.GitModel;
+import com.diplom.padding.service.GitService;
 import org.springframework.stereotype.Service;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +16,7 @@ import java.net.URISyntaxException;
 import java.nio.file.*;
 
 @Service
-public class GitAppImpl implements GitApp {
+public class GitServiceImpl implements GitService {
     private int i = 1;
     @Value("${spring.cloud.config.server.git.username}")
     private String USERNAME;

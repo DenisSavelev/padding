@@ -1,10 +1,12 @@
 package com.diplom.padding.service.impl;
 
+import com.diplom.padding.service.ServiceMoodle;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.transport.*;
 import com.diplom.padding.model.GitModel;
 import com.diplom.padding.service.GitService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 @Service
 public class GitServiceImpl implements GitService {
@@ -141,6 +144,49 @@ public class GitServiceImpl implements GitService {
             System.out.println("File moved successfully.");
         } else {
             System.out.println("File movement failed.");
+        }
+    }
+
+    public void updateBranch(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
+        String dest = "~/local";
+        String branch = gitModel.getTaskName().replaceAll(" ", "") + "/"
+                + gitModel.getUserName().replaceAll(" ", "");
+        Git git = Git.cloneRepository()
+                .setURI(URI + gitModel.getDiscipline() + ".git")
+                .setBranch(branch)
+                .setDirectory(new File(dest))
+                .call();
+        deleteDirectory(dest);
+        gitModel.getFiles().forEach(file -> {
+            Path to = Paths.get(dest + "/" + gitModel.getOrigName().remove(0));
+            File copy = new File(to.toString());
+            try {
+                Files.copy(file.toPath(), copy.toPath());
+                gitAdd(git, copy.getName());
+            } catch (GitAPIException | IOException e) {
+                e.printStackTrace();
+            }
+        });
+        gitCommit(git);
+        gitPush(git, gitModel.getDiscipline());
+    }
+
+    public static void deleteDirectory(String path) throws IOException {
+        Path directory = Paths.get(path);
+        if (Files.exists(directory) && !Files.exists(Path.of(directory + "/.git"))) {
+            Files.walkFileTree(directory, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                    Files.delete(path);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path directory, IOException ioException) throws IOException {
+                    Files.delete(directory);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
         }
     }
 }

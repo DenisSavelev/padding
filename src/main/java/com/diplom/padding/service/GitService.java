@@ -6,6 +6,7 @@ import com.diplom.padding.model.GitModel;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -15,4 +16,5 @@ public interface GitService {
     Git gitClone(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException;
     void gitMerge(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException;
     void deleteBranch(Git git, GitModel gitModel) throws GitAPIException, URISyntaxException;
+    void updateBranch(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException;
 }

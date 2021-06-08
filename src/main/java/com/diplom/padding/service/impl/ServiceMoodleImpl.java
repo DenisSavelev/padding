@@ -36,9 +36,10 @@ public class ServiceMoodleImpl implements ServiceMoodle {
     private final CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO;
 
     @Autowired
-    public ServiceMoodleImpl(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO, CourseDAO courseDAO,
-                             JournalDAO journalDAO, CompetenceDAO competenceDAO, Competence2DAO competence2DAO, CourseTaskMoodleDAO
-                                   courseTaskMoodleDAO, CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
+    public ServiceMoodleImpl(GitApp git, RoleDAO roleDAO, UserDAO userDAO, TaskDAO taskDAO, FileDAO fileDAO,
+                             CourseDAO courseDAO, JournalDAO journalDAO, CompetenceDAO competenceDAO,
+                             Competence2DAO competence2DAO, CourseTaskMoodleDAO courseTaskMoodleDAO,
+                             CourseTaskCompetenceMoodleDAO courseTaskCompetenceMoodleDAO) {
         this.git = git;
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;

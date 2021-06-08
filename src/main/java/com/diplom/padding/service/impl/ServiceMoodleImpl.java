@@ -61,19 +61,12 @@ public class ServiceMoodleImpl implements ServiceMoodle {
            roles.add(new Role((byte) (i+1), title[i]));
         }
         roleDAO.saveAll(roles);
-
-        List<User> users = new ArrayList<>();
-        userDAO.findAll().forEach(userMoodle -> users.add(new User(userMoodle)));
-        userDAO.saveAll(users);
-
+        updateUser(userDAO.findAll());
         List<com.diplom.padding.entity.app.File> files = new ArrayList<>();
         fileDAO.findAll().forEach(file -> files.add(new com.diplom.padding.entity.app.File(file)));
         fileDAO.saveAll(files);
 
-        List<Course> courses = new ArrayList<>();
-        courseDAO.findAll().forEach(courseMoodle -> courses.add(new Course(courseMoodle)));
-        courseDAO.saveAll(courses);
-
+        updateCourse(courseDAO.findAll());
         updateCompetence(competenceDAO.findAll());
         updateCompetence2(competence2DAO.findAllCompetence2());
         updateCompetence3(competence2DAO.findAllCompetence3());
@@ -83,6 +76,8 @@ public class ServiceMoodleImpl implements ServiceMoodle {
 
     @Scheduled(cron = "00 00 05 * * ?")
     private void exportDataForTheDay() {
+        updateUser(userDAO.findForTheDay());
+        updateCourse(courseDAO.findForTheDay());
         updateCompetence(competenceDAO.findForTheDay());
         updateCompetence2(competence2DAO.findCompetence2ForTheDay());
         updateCompetence3(competence2DAO.findCompetence3ForTheDay());
@@ -153,6 +148,18 @@ public class ServiceMoodleImpl implements ServiceMoodle {
                                 journals.add(new Journal(journalMoodle, user, task,
                                         task.getType().equals("assign") ? fileDAO.getByItemAndUser(taskDAO.getIdFilesByIdTask(task.getId()), user.getId()) : null)))));
         return journals;
+    }
+
+    private void updateUser(List<UserMoodle> userMoodles) {
+        List<User> users = new ArrayList<>();
+        userMoodles.forEach(userMoodle -> users.add(new User(userMoodle)));
+        userDAO.saveAll(users);
+    }
+
+    private void updateCourse(List<CourseMoodle> courseMoodles) {
+        List<Course> courses = new ArrayList<>();
+        courseMoodles.forEach(courseMoodle -> courses.add(new Course(courseMoodle)));
+        courseDAO.saveAll(courses);
     }
 
     private void updateCompetence(List<CompetenceMoodle> competenceMs) {

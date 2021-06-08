@@ -100,7 +100,7 @@ public class ServiceMoodleImpl implements ServiceMoodle {
                     files.add(new File(path));
                 });
                 try {
-                    deleteDirectory();
+                    deleteDirectory("~/");
                     git.gitClone(new GitModel(journal, origName, files));
                 } catch (GitAPIException | URISyntaxException | IOException e) {
                     e.printStackTrace();
@@ -110,8 +110,8 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         update.clear();
     }
 
-    private void deleteDirectory() throws IOException {
-        Path directory = Paths.get("~/");
+    public static void deleteDirectory(String path) throws IOException {
+        Path directory = Paths.get(path);
         if (Files.exists(directory)) {
             Files.walkFileTree(directory, new SimpleFileVisitor<>() {
                 @Override

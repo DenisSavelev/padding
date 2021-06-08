@@ -83,7 +83,7 @@ public class GitAppImpl implements GitApp {
 
     @Override
     public void deleteBranch(Git git, GitModel gitModel) throws GitAPIException {
-        String branch = gitModel.getTaskName().replaceAll(" ", "") + "/"+gitModel.getUserName().replaceAll(" ", "");
+        String branch = gitModel.getTaskName().replaceAll(" ", "") + "/" + gitModel.getUserName().replaceAll(" ", "");
         RefSpec refSpec = new RefSpec()
                 .setSource(null)
                 .setDestination("refs/heads/" + branch);

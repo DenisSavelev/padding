@@ -106,7 +106,7 @@ public class ServiceMoodleImpl implements ServiceMoodle {
             } else {
                 journals.add(journal);
             }});
-        journalDAO.saveAll(new ArrayList<>(journals));
+        journalDAO.saveAll(journals);
         journals.forEach(journal -> {
             if (journal.getTask().getType().equals("assign")) {
                 if (journal.getFiles().size() > 0) {

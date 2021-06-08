@@ -23,7 +23,7 @@ public class JournalDAOImpl implements JournalDAO {
     }
 
     @Override
-    public List<Journal> saveAll(List<Journal> journals) {
+    public List<Journal> saveAll(Collection<Journal> journals) {
         return repositoryApp.saveAll(journals);
     }
 

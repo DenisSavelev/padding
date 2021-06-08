@@ -62,10 +62,7 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         }
         roleDAO.saveAll(roles);
         updateUser(userDAO.findAll());
-        List<com.diplom.padding.entity.app.File> files = new ArrayList<>();
-        fileDAO.findAll().forEach(file -> files.add(new com.diplom.padding.entity.app.File(file)));
-        fileDAO.saveAll(files);
-
+        updateFile(fileDAO.findAll());
         updateCourse(courseDAO.findAll());
         updateCompetence(competenceDAO.findAll());
         updateCompetence2(competence2DAO.findAllCompetence2());
@@ -77,6 +74,7 @@ public class ServiceMoodleImpl implements ServiceMoodle {
     @Scheduled(cron = "00 00 05 * * ?")
     private void exportDataForTheDay() {
         updateUser(userDAO.findForTheDay());
+        updateFile(fileDAO.findForTheDay());
         updateCourse(courseDAO.findForTheDay());
         updateCompetence(competenceDAO.findForTheDay());
         updateCompetence2(competence2DAO.findCompetence2ForTheDay());
@@ -154,6 +152,12 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         List<User> users = new ArrayList<>();
         userMoodles.forEach(userMoodle -> users.add(new User(userMoodle)));
         userDAO.saveAll(users);
+    }
+
+    private void updateFile(List<FileMoodle> fileMoodles) {
+        List<com.diplom.padding.entity.app.File> files = new ArrayList<>();
+        fileMoodles.forEach(file -> files.add(new com.diplom.padding.entity.app.File(file)));
+        fileDAO.saveAll(files);
     }
 
     private void updateCourse(List<CourseMoodle> courseMoodles) {

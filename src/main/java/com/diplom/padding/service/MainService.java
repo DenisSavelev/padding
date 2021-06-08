@@ -108,12 +108,7 @@ public class MainService {
         }));
         taskDAO.saveAll(tasks);
 
-        List<Journal> journals = new ArrayList<>();
-        journalDAO.findAll().forEach(journalMoodle ->
-            userDAO.getById(journalMoodle.getIdUser()).ifPresent(user ->
-                    taskDAO.getById(journalMoodle.getIdTask()).ifPresent(task ->
-                            journals.add(new Journal(journalMoodle, user, task,
-                                    task.getType().equals("assign") ? fileDAO.getByItemAndUser(taskDAO.getIdFilesByIdTask(task.getId()), user.getId()) : null)))));
+        List<Journal> journals = getJournals(journalDAO.findAll());
         journalDAO.saveAll(journals);
     }
 
@@ -121,8 +116,8 @@ public class MainService {
     public void exportData() {
         SimpleDateFormat hour = new SimpleDateFormat("HH");
         if (hour.format(new Date()).equals("05")) {
-            List<Journal> allJournal = journalDAO.findAllJournal();
-            allJournal.forEach(journal -> {
+            Queue<Journal> journals = new LinkedList<>(getJournals(journalDAO.findForTheDay()));
+            journals.forEach(journal -> {
                 if (journal.getFiles().size() > 0) {
                     com.diplom.padding.entity.app.File file = journal.getFiles().get(0);
                     String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
@@ -163,5 +158,15 @@ public class MainService {
         } catch (ArrayIndexOutOfBoundsException e) {
             return description;
         }
+    }
+
+    private List<Journal> getJournals(List<JournalMoodle> journalMoodles) {
+        List<Journal> journals = new ArrayList<>();
+        journalMoodles.forEach(journalMoodle ->
+                userDAO.getById(journalMoodle.getIdUser()).ifPresent(user ->
+                        taskDAO.getById(journalMoodle.getIdTask()).ifPresent(task ->
+                                journals.add(new Journal(journalMoodle, user, task,
+                                        task.getType().equals("assign") ? fileDAO.getByItemAndUser(taskDAO.getIdFilesByIdTask(task.getId()), user.getId()) : null)))));
+        return journals;
     }
 }

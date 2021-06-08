@@ -56,7 +56,7 @@ public class GitServiceImpl implements GitService {
     }
 
     @Override
-    public Git gitClone(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
+    public Git gitClone(GitModel gitModel) throws GitAPIException, URISyntaxException {
         String dest = "~/local";
         Git git = Git.cloneRepository()
                 .setURI(URI + gitModel.getDiscipline() + ".git")

@@ -112,15 +112,19 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         journalDAO.saveAll(getJournals(journalDAO.findAll()));
     }
 
-    @Scheduled(cron = "0 0 5 * * ?")
+    @Scheduled(cron = "20 57 15 * * ?")
     private void exportDataForTheDay() {
-        Queue<Journal> journals = new LinkedList<>(getJournals(journalDAO.findForTheDay()));
-        List<Long> id = new ArrayList<>();
-        journals.forEach(journal -> id.add(journal.getId()));
-        List<Journal> update = journalDAO.getByIds(id);
-        journals.removeAll(update);
+        Queue<Journal> journals = new LinkedList<>();
+        List<Journal> update = new ArrayList<>();
+        getJournals(journalDAO.findAll()).forEach(journal -> {
+            if (journal.getFiles() != null) {
+                if (journalDAO.getById(journal.getId()).isPresent()) {
+                    update.add(journal);
+                } else {
+                    journals.add(journal);
+                }}});
+        journalDAO.saveAll(new ArrayList<>(journals));
         journals.forEach(journal -> {
-            if (journal.getFiles().size() > 0) {
                 com.diplom.padding.entity.app.File file = journal.getFiles().get(0);
                 String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
                 try {
@@ -129,8 +133,9 @@ public class ServiceMoodleImpl implements ServiceMoodle {
                 } catch (GitAPIException | URISyntaxException | IOException e) {
                     e.printStackTrace();
                 }
-            }
         });
+        journals.clear();
+        update.clear();
     }
 
     private void deleteDirectory() throws IOException {

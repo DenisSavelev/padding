@@ -3,12 +3,11 @@ package com.diplom.padding.dao;
 import com.diplom.padding.entity.app.Journal;
 import com.diplom.padding.entity.moodle.JournalMoodle;
 
-import java.util.List;
+import java.util.*;
 
 public interface JournalDAO {
     List<Journal> saveAll(List<Journal> journals);
-    List<Journal> getByIds(List<Long> idList);
-    List<Journal> findAllJournal();
+    Optional<Journal> getById(Long id);
     List<JournalMoodle> findAll();
     List<JournalMoodle> findForTheDay();
 }

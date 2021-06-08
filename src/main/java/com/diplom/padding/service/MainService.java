@@ -14,7 +14,6 @@ import java.util.*;
 import java.io.File;
 import java.nio.file.*;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.net.URISyntaxException;
 import javax.annotation.PostConstruct;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -107,29 +106,28 @@ public class MainService {
             courseDAO.getById(taskMoodle.getIdCourse()).ifPresent(t -> tasks.add(new Task(taskMoodle, t, competence2s, competence3s)));
         }));
         taskDAO.saveAll(tasks);
-
-        List<Journal> journals = getJournals(journalDAO.findAll());
-        journalDAO.saveAll(journals);
+        journalDAO.saveAll(getJournals(journalDAO.findAll()));
     }
 
-    @Scheduled(fixedDelay = 3600000)
+    @Scheduled(cron = "0 0 5 * * ?")
     public void exportData() {
-        SimpleDateFormat hour = new SimpleDateFormat("HH");
-        if (hour.format(new Date()).equals("05")) {
-            Queue<Journal> journals = new LinkedList<>(getJournals(journalDAO.findForTheDay()));
-            journals.forEach(journal -> {
-                if (journal.getFiles().size() > 0) {
-                    com.diplom.padding.entity.app.File file = journal.getFiles().get(0);
-                    String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
-                    try {
-                        deleteDirectory();
-                        git.gitClone(new GitModel(journal, new File(path)));
-                    } catch (GitAPIException | URISyntaxException | IOException e) {
-                        e.printStackTrace();
-                    }
+        Queue<Journal> journals = new LinkedList<>(getJournals(journalDAO.findForTheDay()));
+        List<Long> id = new ArrayList<>();
+        journals.forEach(journal -> id.add(journal.getId()));
+        List<Journal> update = journalDAO.getByIds(id);
+        journals.removeAll(update);
+        journals.forEach(journal -> {
+            if (journal.getFiles().size() > 0) {
+                com.diplom.padding.entity.app.File file = journal.getFiles().get(0);
+                String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
+                try {
+                    deleteDirectory();
+                    git.gitClone(new GitModel(journal, new File(path)));
+                } catch (GitAPIException | URISyntaxException | IOException e) {
+                    e.printStackTrace();
                 }
-            });
-        }
+            }
+        });
     }
 
     private void deleteDirectory() throws IOException {

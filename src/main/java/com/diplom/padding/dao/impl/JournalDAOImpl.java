@@ -28,6 +28,11 @@ public class JournalDAOImpl implements JournalDAO {
     }
 
     @Override
+    public List<Journal> getByIds(List<Long> idList) {
+        return repositoryApp.findAllById(idList);
+    }
+
+    @Override
     public List<Journal> findAllJournal() {
         return repositoryApp.findAll();
     }

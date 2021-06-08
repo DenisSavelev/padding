@@ -66,10 +66,16 @@ public class GitAppImpl implements GitApp {
         String branch = gitModel.getTaskName().replaceAll(" ", "") + "/"
                 + gitModel.getUserName().replaceAll(" ", "");
         createBranch(git, branch);
-        Path to = Paths.get(dest + "/" + gitModel.getOrigName());
-        File copy = new File(to.toString());
-        Files.copy(gitModel.getFile().toPath(), copy.toPath());
-        gitAdd(git, copy.getName());
+        gitModel.getFiles().forEach(file -> {
+            Path to = Paths.get(dest + "/" + gitModel.getOrigName().remove(0));
+            File copy = new File(to.toString());
+            try {
+                Files.copy(file.toPath(), copy.toPath());
+                gitAdd(git, copy.getName());
+            } catch (GitAPIException | IOException e) {
+                e.printStackTrace();
+            }
+        });
         gitCommit(git);
         gitPush(git, gitModel.getDiscipline());
         return git;

@@ -117,23 +117,29 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         Queue<Journal> journals = new LinkedList<>();
         List<Journal> update = new ArrayList<>();
         getJournals(journalDAO.findForTheDay()).forEach(journal -> {
-            if (journal.getFiles() != null) {
-                if (journalDAO.getById(journal.getId()).isPresent()) {
-                    update.add(journal);
-                } else {
-                    journals.add(journal);
-                }}});
+            if (journalDAO.getById(journal.getId()).isPresent()) {
+                update.add(journal);
+            } else {
+                journals.add(journal);
+            }});
         journalDAO.saveAll(new ArrayList<>(journals));
         journals.forEach(journal -> {
-                com.diplom.padding.entity.app.File file = journal.getFiles().get(0);
-                String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
+            if (journal.getTask().getType().equals("assign")) {
+                if (journal.getFiles().size() > 0) {
+                List<File> files = new ArrayList<>();
+                List<String> origName = new ArrayList<>();
+                journal.getFiles().forEach(file -> {
+                    String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
+                    origName.add(file.getTitle());
+                    files.add(new File(path));
+                });
                 try {
                     deleteDirectory();
-                    git.gitClone(new GitModel(journal, new File(path)));
+                    git.gitClone(new GitModel(journal, origName, files));
                 } catch (GitAPIException | URISyntaxException | IOException e) {
                     e.printStackTrace();
                 }
-        });
+            }}});
         journals.clear();
         update.clear();
     }

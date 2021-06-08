@@ -77,19 +77,7 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         updateCompetence(competenceDAO.findAll());
         updateCompetence2(competence2DAO.findAllCompetence2());
         updateCompetence3(competence2DAO.findAllCompetence3());
-
-        List<Task> tasks = new ArrayList<>();
-        taskDAO.findAll().forEach(taskMoodle ->
-                courseTaskMoodleDAO.getIdByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getIdCourse()).forEach(cmid -> {
-            List<Competence2> competence2s = new ArrayList<>();
-            List<Competence3> competence3s = new ArrayList<>();
-            courseTaskCompetenceMoodleDAO.getCompetenceByIdCourseTask(cmid).forEach(id -> {
-                competence2DAO.getCompetence2ById(id).ifPresent(competence2s::add);
-                competence2DAO.getCompetence3ById(id).ifPresent(competence3s::add);
-            });
-            courseDAO.getById(taskMoodle.getIdCourse()).ifPresent(t -> tasks.add(new Task(taskMoodle, t, competence2s, competence3s)));
-        }));
-        taskDAO.saveAll(tasks);
+        updateTask(taskDAO.findAll());
         journalDAO.saveAll(getJournals(journalDAO.findAll()));
     }
 
@@ -98,6 +86,7 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         updateCompetence(competenceDAO.findForTheDay());
         updateCompetence2(competence2DAO.findCompetence2ForTheDay());
         updateCompetence3(competence2DAO.findCompetence3ForTheDay());
+        updateTask(taskDAO.findForTheDay());
         Queue<Journal> journals = new LinkedList<>();
         List<Journal> update = new ArrayList<>();
         getJournals(journalDAO.findForTheDay()).forEach(journal -> {
@@ -191,5 +180,20 @@ public class ServiceMoodleImpl implements ServiceMoodle {
             competence2DAO.getCompetence2ById(competenceM3.getIdParent()).ifPresent(c -> competences3.add(new Competence3(competenceM3, c)));
         });
         competence2DAO.saveAllCompetence3(competences3);
+    }
+
+    private void updateTask(List<TaskMoodle> taskMoodles) {
+        List<Task> tasks = new ArrayList<>();
+        taskMoodles.forEach(taskMoodle ->
+                courseTaskMoodleDAO.getIdByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getIdCourse()).forEach(cmid -> {
+                    List<Competence2> competence2s = new ArrayList<>();
+                    List<Competence3> competence3s = new ArrayList<>();
+                    courseTaskCompetenceMoodleDAO.getCompetenceByIdCourseTask(cmid).forEach(id -> {
+                        competence2DAO.getCompetence2ById(id).ifPresent(competence2s::add);
+                        competence2DAO.getCompetence3ById(id).ifPresent(competence3s::add);
+                    });
+                    courseDAO.getById(taskMoodle.getIdCourse()).ifPresent(t -> tasks.add(new Task(taskMoodle, t, competence2s, competence3s)));
+                }));
+        taskDAO.saveAll(tasks);
     }
 }

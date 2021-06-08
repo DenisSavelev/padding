@@ -12,7 +12,7 @@ public class FileMoodle {
     @Column(name = "filename")
     private String name;
     @Column(name = "itemid")
-    private Long idTask;
+    private Long idItem;
     @Column(name = "userid")
     private Long idUser;
     @Column(name = "component")

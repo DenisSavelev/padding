@@ -112,7 +112,7 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         journalDAO.saveAll(getJournals(journalDAO.findAll()));
     }
 
-    @Scheduled(cron = "20 57 15 * * ?")
+    @Scheduled(cron = "0 0 5 * * ?")
     private void exportDataForTheDay() {
         Queue<Journal> journals = new LinkedList<>();
         List<Journal> update = new ArrayList<>();

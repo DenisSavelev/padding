@@ -22,7 +22,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 @Service
 @EnableScheduling
-public class ServiceMoodleImpl implements ServiceMoodle {
+public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
     private final GitService git;
     private final RoleDAO roleDAO;
     private final UserDAO userDAO;
@@ -30,6 +30,8 @@ public class ServiceMoodleImpl implements ServiceMoodle {
     private final FileDAO fileDAO;
     private final CourseDAO courseDAO;
     private final JournalDAO journalDAO;
+    private static Queue<Journal> update;
+    private static Queue<Journal> journals;
     private final CompetenceDAO competenceDAO;
     private final Competence2DAO competence2DAO;
     private final CourseTaskMoodleDAO courseTaskMoodleDAO;
@@ -80,8 +82,8 @@ public class ServiceMoodleImpl implements ServiceMoodle {
         updateCompetence2(competence2DAO.findCompetence2ForTheDay());
         updateCompetence3(competence2DAO.findCompetence3ForTheDay());
         updateTask(taskDAO.findForTheDay());
-        Queue<Journal> journals = new LinkedList<>();
-        List<Journal> update = new ArrayList<>();
+        journals = new LinkedList<>();
+        update = new LinkedList<>();
         getJournals(journalDAO.findForTheDay()).forEach(journal -> {
             if (journalDAO.getById(journal.getId()).isPresent()) {
                 update.add(journal);
@@ -89,25 +91,61 @@ public class ServiceMoodleImpl implements ServiceMoodle {
                 journals.add(journal);
             }});
         journalDAO.saveAll(journals);
+        journalDAO.saveAll(update);
+        new Thread(new ServiceMoodleImpl(git, roleDAO, userDAO, taskDAO, fileDAO, courseDAO, journalDAO, competenceDAO,
+                competence2DAO, courseTaskMoodleDAO, courseTaskCompetenceMoodleDAO)).start();
+        update.forEach(journal -> {
+            if (journal.getTask().getType().equals("assign")) {
+                if (journal.getFiles().size() > 0) {
+                    List<File> files = new ArrayList<>();
+                    List<String> origName = new ArrayList<>();
+                    journal.getFiles().forEach(file -> {
+                        String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
+                        origName.add(file.getTitle());
+                        files.add(new File(path));
+                    });
+                    try {
+                        deleteDirectory("~/");
+                        git.updateBranch(new GitModel(journal, origName, files));
+                    } catch (GitAPIException | URISyntaxException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }}});
+        update.clear();
+    }
+
+    @Override
+    public void run() {
         journals.forEach(journal -> {
             if (journal.getTask().getType().equals("assign")) {
                 if (journal.getFiles().size() > 0) {
-                List<File> files = new ArrayList<>();
-                List<String> origName = new ArrayList<>();
-                journal.getFiles().forEach(file -> {
-                    String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
-                    origName.add(file.getTitle());
-                    files.add(new File(path));
-                });
-                try {
-                    deleteDirectory("~/");
-                    git.gitClone(new GitModel(journal, origName, files));
-                } catch (GitAPIException | URISyntaxException | IOException e) {
-                    e.printStackTrace();
-                }
-            }}});
+                    List<File> files = new ArrayList<>();
+                    List<String> origName = new ArrayList<>();
+                    journal.getFiles().forEach(file -> {
+                        String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
+                        origName.add(file.getTitle());
+                        files.add(new File(path));
+                    });
+                    try {
+                        deleteDirectory("~/");
+                        git.gitClone(new GitModel(journal, origName, files));
+                    } catch (GitAPIException | URISyntaxException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }}});
+        journals.forEach(journal -> {
+            if (journal.getTask().getType().equals("assign")) {
+                if (journal.getFiles().size() > 0) {
+                    if (journal.getRating() / journal.getTask().getMaxRating() >= 0.5) {
+                        try {
+                            deleteDirectory("~/");
+                            git.gitMerge(new GitModel(journal, null, null));
+                        } catch (GitAPIException | URISyntaxException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+        }}});
         journals.clear();
-        update.clear();
     }
 
     public static void deleteDirectory(String path) throws IOException {

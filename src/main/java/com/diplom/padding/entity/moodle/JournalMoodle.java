@@ -7,10 +7,12 @@ import javax.persistence.*;
 public class JournalMoodle {
     @Id
     private Long id;
-    @Column(name = "itemid")
-    private Long idTask;
-    @Column(name = "userid")
-    private Long idUser;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="itemid")
+    private TaskMoodle task;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="userid")
+    private UserMoodle user;
     @Column(name = "finalgrade")
     private Float grade;
     @Column(name = "timemodified")
@@ -20,12 +22,12 @@ public class JournalMoodle {
         return id;
     }
 
-    public Long getIdTask() {
-        return idTask;
+    public TaskMoodle getTask() {
+        return task;
     }
 
-    public Long getIdUser() {
-        return idUser;
+    public UserMoodle getUser() {
+        return user;
     }
 
     public Float getGrade() {

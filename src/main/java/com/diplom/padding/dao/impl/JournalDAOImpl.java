@@ -4,7 +4,7 @@ import com.diplom.padding.dao.JournalDAO;
 import com.diplom.padding.entity.app.Journal;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.*;
-import com.diplom.padding.entity.moodle.JournalMoodle;
+import com.diplom.padding.entity.moodle.*;
 import com.diplom.padding.repositories.app.JournalRepository;
 
 import javax.persistence.*;
@@ -30,6 +30,17 @@ public class JournalDAOImpl implements JournalDAO {
     @Override
     public Optional<Journal> getById(Long id) {
         return repositoryApp.findById(id);
+    }
+
+    @Override
+    public JournalMoodle getByUserAndFile(Long idUser, Long idFile) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<JournalMoodle> cq = cb.createQuery(JournalMoodle.class);
+        Root<JournalMoodle> root = cq.from(JournalMoodle.class);
+        Root<TaskMoodle> task = cb.createQuery(TaskMoodle.class).from(TaskMoodle.class);
+        //Join<JournalMoodle, TaskMoodle> join = root.join("idTask").on(cb.equal(root.get("idTask"), task.get("id")));
+        cq.where(cb.equal(root.get("user"), idUser));
+        return entityManager.createQuery(cq).getSingleResult();
     }
 
     @Override

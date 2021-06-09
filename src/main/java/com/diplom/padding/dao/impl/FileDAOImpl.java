@@ -60,9 +60,9 @@ public class FileDAOImpl implements FileDAO {
 
     private Predicate filter(CriteriaBuilder cb, Root<FileMoodle> root) {
         Predicate predicate = cb.conjunction();
-        Predicate id = cb.greaterThan(root.get("idUser"), 2L);
+        Predicate id = cb.greaterThan(root.get("user"), 2L);
         predicate = cb.and(predicate, id);
-        Predicate notNull = cb.and(cb.isNotNull(root.get("idUser")), cb.isNotNull(root.get("author")));
+        Predicate notNull = cb.and(cb.isNotNull(root.get("user")), cb.isNotNull(root.get("author")));
         predicate = cb.and(predicate, notNull);
         Predicate component = cb.notLike(root.get("component"), "user");
         return cb.and(predicate, component);
@@ -73,7 +73,7 @@ public class FileDAOImpl implements FileDAO {
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<FileMoodle> root = cq.from(FileMoodle.class);
         Predicate predicate = cb.conjunction();
-        Predicate id = cb.equal(root.get("idUser"), idUser);
+        Predicate id = cb.equal(root.get("user"), idUser);
         predicate = cb.and(predicate, id);
         Predicate area = root.get("idItem").in(idItem);
         predicate = cb.and(predicate, area);

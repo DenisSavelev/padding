@@ -23,13 +23,13 @@ public class Task {
     public Task() {
     }
 
-    public Task(TaskMoodle task, Course course, List<Competence2> competence2, List<Competence3> competence3) {
+    public Task(TaskMoodle task, List<Competence2> competence2, List<Competence3> competence3) {
         this.id = task.getId();
         this.name = task.getName();
         this.maxRating = task.getMaxRating();
         this.minRating = task.getMinRating();
         this.type = task.getType();
-        this.course = course;
+        this.course = new Course(task.getCourse());
         this.competences2 = competence2;
         this.competences3 = competence3;
     }

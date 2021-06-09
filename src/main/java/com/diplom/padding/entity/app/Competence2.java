@@ -16,11 +16,11 @@ public class Competence2 {
     public Competence2() {
     }
 
-    public Competence2(CompetenceMoodle2 competenceMoodle2, Competence competence) {
+    public Competence2(CompetenceMoodle2 competenceMoodle2) {
         this.id = competenceMoodle2.getId();
         this.shortname = competenceMoodle2.getShortname();
         this.description = competenceMoodle2.getDescription();
-        this.competence = competence;
+        this.competence = new Competence(competenceMoodle2.getCompetence());
     }
 
     public Long getId() {

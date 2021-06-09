@@ -2,9 +2,9 @@ package com.diplom.padding.service.impl;
 
 import com.diplom.padding.dao.*;
 import com.diplom.padding.entity.app.*;
-import com.diplom.padding.service.GitService;
 import com.diplom.padding.model.GitModel;
 import com.diplom.padding.entity.moodle.*;
+import com.diplom.padding.service.GitService;
 import org.springframework.stereotype.Service;
 import com.diplom.padding.service.ServiceMoodle;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -58,9 +58,9 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
     @PostConstruct
     private void findAllData() {
         List<Role> roles = new ArrayList<>();
-        String[] title = new String[] {"Admin", "Teacher", "Student", "ManagerCompetency"};
-        for(byte i = 0; i < 4; i++) {
-           roles.add(new Role((byte) (i+1), title[i]));
+        String[] title = new String[]{"Admin", "Teacher", "Student", "ManagerCompetency"};
+        for (byte i = 0; i < 4; i++) {
+            roles.add(new Role((byte) (i + 1), title[i]));
         }
         roleDAO.saveAll(roles);
         updateUser(userDAO.findAll());
@@ -70,7 +70,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
         updateCompetence2(competence2DAO.findAllCompetence2());
         updateCompetence3(competence2DAO.findAllCompetence3());
         updateTask(taskDAO.findAll());
-        journalDAO.saveAll(getJournals(journalDAO.findAll()));
+        //journalDAO.saveAll(getJournals(journalDAO.findAll()));
     }
 
     @Scheduled(cron = "00 00 05 * * ?")
@@ -89,7 +89,8 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                 update.add(journal);
             } else {
                 journals.add(journal);
-            }});
+            }
+        });
         journalDAO.saveAll(journals);
         journalDAO.saveAll(update);
         new Thread(new ServiceMoodleImpl(git, roleDAO, userDAO, taskDAO, fileDAO, courseDAO, journalDAO, competenceDAO,
@@ -140,7 +141,9 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                     } catch (GitAPIException | URISyntaxException | IOException e) {
                         e.printStackTrace();
                     }
-                }}});
+                }
+            }
+        });
         queue.forEach(journal -> {
             if (journal.getTask().getType().equals("assign")) {
                 if (journal.getFiles().size() > 0) {
@@ -152,7 +155,9 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                             e.printStackTrace();
                         }
                     }
-                }}});
+                }
+            }
+        });
     }
 
     private String parse(String description) {
@@ -167,8 +172,8 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
     private List<Journal> getJournals(List<JournalMoodle> journalMoodles) {
         List<Journal> journals = new ArrayList<>();
         journalMoodles.forEach(journalMoodle ->
-                userDAO.getById(journalMoodle.getIdUser()).ifPresent(user ->
-                        taskDAO.getById(journalMoodle.getIdTask()).ifPresent(task ->
+                userDAO.getById(/*journalMoodle.getIdUser()*/1L).ifPresent(user ->
+                        taskDAO.getById(/*journalMoodle.getIdTask()*/1L).ifPresent(task ->
                                 journals.add(new Journal(journalMoodle, user, task,
                                         task.getType().equals("assign") ? fileDAO.getByItemAndUser(taskDAO.getIdFilesByIdTask(task.getId()), user.getId()) : null)))));
         return journals;
@@ -205,7 +210,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
         List<Competence2> competences2 = new ArrayList<>();
         competenceMs2.forEach(competenceM2 -> {
             competenceM2.setDescription(parse(competenceM2.getDescription()));
-            competenceDAO.getById(competenceM2.getIdCompetence()).ifPresent(c -> competences2.add(new Competence2(competenceM2, c)));
+            competences2.add(new Competence2(competenceM2));
         });
         competence2DAO.saveAllCompetence2(competences2);
     }
@@ -222,15 +227,15 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
     private void updateTask(List<TaskMoodle> taskMoodles) {
         List<Task> tasks = new ArrayList<>();
         taskMoodles.forEach(taskMoodle ->
-                courseTaskMoodleDAO.getIdByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getIdCourse()).forEach(cmid -> {
+                courseTaskMoodleDAO.getIdByIdTaskAndIdCourse(taskMoodle.getIdItem(), taskMoodle.getCourse().getId()).forEach(cmid -> {
                     List<Competence2> competence2s = new ArrayList<>();
                     List<Competence3> competence3s = new ArrayList<>();
                     courseTaskCompetenceMoodleDAO.getCompetenceByIdCourseTask(cmid).forEach(id -> {
                         competence2DAO.getCompetence2ById(id).ifPresent(competence2s::add);
                         competence2DAO.getCompetence3ById(id).ifPresent(competence3s::add);
+                        tasks.add(new Task(taskMoodle, competence2s, competence3s));
                     });
-                    courseDAO.getById(taskMoodle.getIdCourse()).ifPresent(t -> tasks.add(new Task(taskMoodle, t, competence2s, competence3s)));
+                    taskDAO.saveAll(tasks);
                 }));
-        taskDAO.saveAll(tasks);
     }
 }

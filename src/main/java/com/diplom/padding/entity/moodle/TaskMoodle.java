@@ -15,8 +15,9 @@ public class TaskMoodle {
     private Float minRating;
     @Column(name = "itemmodule")
     private String type;
-    @Column(name = "courseid")
-    private Long idCourse;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "courseid")
+    private CourseMoodle course;
     @Column(name = "iteminstance")
     private Long idItem;
     @Column(name = "timemodified")
@@ -42,8 +43,8 @@ public class TaskMoodle {
         return type;
     }
 
-    public Long getIdCourse() {
-        return idCourse;
+    public CourseMoodle getCourse() {
+        return course;
     }
 
     public Long getIdItem() {

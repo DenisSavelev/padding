@@ -70,7 +70,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
         updateCompetence2(competence2DAO.findAllCompetence2());
         updateCompetence3(competence2DAO.findAllCompetence3());
         updateTask(taskDAO.findAll());
-        //journalDAO.saveAll(getJournals(journalDAO.findAll()));
+        journalDAO.saveAll(getJournals(journalDAO.findAll()));
     }
 
     @Scheduled(cron = "00 00 05 * * ?")
@@ -172,10 +172,9 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
     private List<Journal> getJournals(List<JournalMoodle> journalMoodles) {
         List<Journal> journals = new ArrayList<>();
         journalMoodles.forEach(journalMoodle ->
-                userDAO.getById(/*journalMoodle.getIdUser()*/1L).ifPresent(user ->
-                        taskDAO.getById(/*journalMoodle.getIdTask()*/1L).ifPresent(task ->
-                                journals.add(new Journal(journalMoodle, user, task,
-                                        task.getType().equals("assign") ? fileDAO.getByItemAndUser(taskDAO.getIdFilesByIdTask(task.getId()), user.getId()) : null)))));
+                taskDAO.getById(journalMoodle.getTask().getId()).ifPresent(task ->
+                        journals.add(new Journal(journalMoodle, task,
+                                task.getType().equals("assign") ? fileDAO.getByItemAndUser(taskDAO.getIdFilesByIdTask(task.getId()), journalMoodle.getUser().getId()) : null))));
         return journals;
     }
 

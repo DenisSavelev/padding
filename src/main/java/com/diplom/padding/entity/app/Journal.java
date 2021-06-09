@@ -20,9 +20,9 @@ public class Journal {
     public Journal() {
     }
 
-    public Journal(JournalMoodle journal, User user, Task task, List<File> files) {
+    public Journal(JournalMoodle journal, Task task, List<File> files) {
         this.id = journal.getId();
-        this.user = user;
+        this.user = new User(journal.getUser());
         this.task = task;
         this.rating = journal.getGrade();
         this.files = files;

@@ -1,12 +1,10 @@
 package com.diplom.padding.service.impl;
 
-import com.diplom.padding.service.ServiceMoodle;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.transport.*;
 import com.diplom.padding.model.GitModel;
 import com.diplom.padding.service.GitService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,13 +12,12 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.nio.file.*;
+import java.net.URISyntaxException;
 import java.nio.file.attribute.BasicFileAttributes;
 
 @Service
 public class GitServiceImpl implements GitService {
-    private int i = 1;
     @Value("${spring.cloud.config.server.git.username}")
     private String USERNAME;
     @Value("${spring.cloud.config.server.git.password}")
@@ -79,7 +76,7 @@ public class GitServiceImpl implements GitService {
                 e.printStackTrace();
             }
         });
-        gitCommit(git);
+        gitCommit(git, branch);
         gitPush(git, gitModel.getDiscipline());
         return git;
     }
@@ -100,7 +97,7 @@ public class GitServiceImpl implements GitService {
     public void gitMerge(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
         String dest = "~/local";
         String branch = gitModel.getTaskName().replaceAll(" ", "")
-                + "/"+gitModel.getUserName().replaceAll(" ", "");
+                + "/" + gitModel.getUserName().replaceAll(" ", "");
         Git git = Git.cloneRepository()
                 .setURI(URI + gitModel.getDiscipline() + ".git")
                 .setBranch("master")
@@ -117,10 +114,9 @@ public class GitServiceImpl implements GitService {
         add.addFilepattern(to).call();
     }
 
-    private void gitCommit(Git git) throws GitAPIException {
+    private void gitCommit(Git git, String name) throws GitAPIException {
         CommitCommand commit = git.commit();
-        i = i + 1;
-        commit.setMessage("commit-" + i).call();
+        commit.setMessage("commit-" + name).call();
     }
 
     private void gitPush(Git git, String nameDiscipline) throws GitAPIException, URISyntaxException {
@@ -133,20 +129,7 @@ public class GitServiceImpl implements GitService {
         push.call();
     }
 
-    public void moveFile(String src, String dest) {
-        Path result = null;
-        try {
-            result =  Files.move(Paths.get(src), Paths.get(dest));
-        } catch (IOException e) {
-            System.out.println("Exception while moving file: " + e.getMessage());
-        }
-        if (result != null) {
-            System.out.println("File moved successfully.");
-        } else {
-            System.out.println("File movement failed.");
-        }
-    }
-
+    @Override
     public void updateBranch(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
         String dest = "~/local";
         String branch = gitModel.getTaskName().replaceAll(" ", "") + "/"
@@ -167,23 +150,17 @@ public class GitServiceImpl implements GitService {
                 e.printStackTrace();
             }
         });
-        gitCommit(git);
+        gitCommit(git, branch);
         gitPush(git, gitModel.getDiscipline());
     }
 
-    public static void deleteDirectory(String path) throws IOException {
+    private void deleteDirectory(String path) throws IOException {
         Path directory = Paths.get(path);
         if (Files.exists(directory) && !Files.exists(Path.of(directory + "/.git"))) {
             Files.walkFileTree(directory, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
                     Files.delete(path);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path directory, IOException ioException) throws IOException {
-                    Files.delete(directory);
                     return FileVisitResult.CONTINUE;
                 }
             });

@@ -11,6 +11,7 @@ public class File {
     private String title;
     private String hash;
     private String path;
+    private Long item;
 
     public File() {
     }
@@ -20,6 +21,7 @@ public class File {
         this.title = fileMoodle.getName();
         this.hash = fileMoodle.getContentHash();
         this.path = fileMoodle.getContentHash().substring(0, 2) + "/" + fileMoodle.getContentHash().substring(2, 4);
+        this.item = fileMoodle.getIdItem();
     }
 
     public Long getId() {
@@ -52,5 +54,13 @@ public class File {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public Long getItem() {
+        return item;
+    }
+
+    public void setItem(Long item) {
+        this.item = item;
     }
 }

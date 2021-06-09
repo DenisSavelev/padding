@@ -34,6 +34,10 @@ public class FileMoodle {
         return name;
     }
 
+    public Long getIdItem() {
+        return idItem;
+    }
+
     public Long getIdUser() {
         return idUser;
     }

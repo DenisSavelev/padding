@@ -232,9 +232,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                     courseTaskCompetenceMoodleDAO.getCompetenceByIdCourseTask(cmid).forEach(id -> {
                         competence2DAO.getCompetence2ById(id).ifPresent(competence2s::add);
                         competence2DAO.getCompetence3ById(id).ifPresent(competence3s::add);
-                        tasks.add(new Task(taskMoodle, competence2s, competence3s));
-                    });
-                    taskDAO.saveAll(tasks);
-                }));
+                        tasks.add(new Task(taskMoodle, competence2s, competence3s));});}));
+        taskDAO.saveAll(tasks);
     }
 }

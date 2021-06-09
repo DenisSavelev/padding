@@ -7,8 +7,7 @@ import com.diplom.padding.entity.moodle.CourseTaskCompetenceMoodle;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class CourseTaskCompetenceMoodleDAOImpl implements CourseTaskCompetenceMoodleDAO {

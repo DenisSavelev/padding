@@ -109,7 +109,7 @@ public class GitServiceImpl implements GitService {
     }
 
     @Override
-    public void updateBranch(GitModel gitModel) throws GitAPIException, IOException, URISyntaxException {
+    public void updateBranch(GitModel gitModel) throws GitAPIException, IOException {
         String dest = "~/local";
         String branch = gitModel.getTaskName().replaceAll(" ", "") + "/"
                 + gitModel.getUserName().replaceAll(" ", "");

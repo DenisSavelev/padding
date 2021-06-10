@@ -126,15 +126,15 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
     }
 
     private void interactionGit(Queue<Journal> queue) {
-        /*queue.forEach(journal -> {
+        queue.forEach(journal -> {
             if (journal.getTask().getType().equals("assign")) {
                 if (journal.getFiles().size() > 0) {
-                    List<File> files = new ArrayList<>();
+                    List<java.io.File> files = new ArrayList<>();
                     List<String> origName = new ArrayList<>();
                     journal.getFiles().forEach(file -> {
                         String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
                         origName.add(file.getTitle());
-                        files.add(new File(path));
+                        files.add(new java.io.File(path));
                     });
                     try {
                         deleteDirectory("~/");
@@ -158,7 +158,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                     }
                 }
             }
-        });*/
+        });
     }
 
     private String parse(String description) {
@@ -204,6 +204,15 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
         List<Long> file = fileDAO.getIdFiles();
         file.removeAll(fileDAO.getIdFilesMoodle());
         if (file.size() > 0) {
+            file.forEach(id -> {
+                List<Journal> journals = journalDAO.getByJournal(id);
+                journals.forEach(journal -> {
+                    List<File> files = journal.getFiles();
+                    fileDAO.getById(id).ifPresent(files::remove);
+                    journal.setFiles(files);
+                });
+                journalDAO.saveAll(journals);
+            });
             List<File> files = fileDAO.deleteById(file);
             update.forEach(journal -> {
                 List<File> f = journal.getFiles();

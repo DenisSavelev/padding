@@ -146,7 +146,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
         journals.clear();
     }
 
-    private void deleteDirectory() throws IOException {
+    public static void deleteDirectory() throws IOException {
         Path directory = Paths.get("~/");
         if (Files.exists(directory)) {
             Files.walkFileTree(directory, new SimpleFileVisitor<>() {

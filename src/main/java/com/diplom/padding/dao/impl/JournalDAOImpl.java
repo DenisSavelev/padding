@@ -32,6 +32,16 @@ public class JournalDAOImpl implements JournalDAO {
     }
 
     @Override
+    public List<Journal> getByJournal(Long idFile) {
+        CriteriaBuilder cb = manager.getCriteriaBuilder();
+        CriteriaQuery<Journal> cq = cb.createQuery(Journal.class);
+        Root<Journal> root = cq.from(Journal.class);
+        Join<Journal, File> join = root.join("files");
+        cq.where(join.get("id").in(idFile));
+        return manager.createQuery(cq).getResultList();
+    }
+
+    @Override
     public Optional<Journal> getById(Long id) {
         return repositoryApp.findById(id);
     }

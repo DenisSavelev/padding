@@ -32,7 +32,7 @@ public class JournalDAOImpl implements JournalDAO {
     }
 
     @Override
-    public List<Journal> getByJournal(Long idFile) {
+    public List<Journal> getByFile(Long idFile) {
         CriteriaBuilder cb = manager.getCriteriaBuilder();
         CriteriaQuery<Journal> cq = cb.createQuery(Journal.class);
         Root<Journal> root = cq.from(Journal.class);

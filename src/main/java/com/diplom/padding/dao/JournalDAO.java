@@ -7,7 +7,7 @@ import java.util.*;
 
 public interface JournalDAO {
     List<Journal> saveAll(Collection<Journal> journals);
-    List<Journal> getByJournal(Long idFile);
+    List<Journal> getByFile(Long idFile);
     Optional<Journal> getById(Long id);
     Journal getByItemFile(Long itemFile);
     List<JournalMoodle> findAll();

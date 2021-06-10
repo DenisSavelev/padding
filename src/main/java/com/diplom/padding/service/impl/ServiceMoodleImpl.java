@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import javax.annotation.PostConstruct;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @EnableScheduling
@@ -93,6 +94,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
             }
         });
         journalDAO.saveAll(journals);
+        deleteDuplicate();
         update = new LinkedList<>(journalDAO.saveAll(update));
         new Thread(new ServiceMoodleImpl(git, roleDAO, userDAO, taskDAO, fileDAO, courseDAO, journalDAO, competenceDAO,
                 competence2DAO, courseTaskMoodleDAO, courseTaskCompetenceMoodleDAO)).start();
@@ -196,7 +198,9 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
             fileDAO.getById(file.getId()).ifPresent(file1 -> {
                 Journal journal = journalDAO.getByItemFile(file.getIdItem());
                 List<com.diplom.padding.entity.app.File> temp = journal.getFiles();
-                temp.add(files.get(files.size() - 1));
+                if (!temp.contains(file1)) {
+                    temp.add(file1);
+                }
                 update.add(journal);
             });
         });
@@ -213,7 +217,6 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                 journals.forEach(journal -> {
                     List<File> files = journal.getFiles();
                     fileDAO.getById(id).ifPresent(files::remove);
-                    journal.setFiles(files);
                 });
                 journalDAO.saveAll(journals);
             });
@@ -221,7 +224,6 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
             update.forEach(journal -> {
                 List<File> f = journal.getFiles();
                 f.removeAll(files);
-                journal.setFiles(f);
             });
         }
     }
@@ -270,5 +272,26 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                         competence2DAO.getCompetence3ById(id).ifPresent(competence3s::add);
                         tasks.add(new Task(taskMoodle, competence2s, competence3s));});}));
         taskDAO.saveAll(tasks);
+    }
+
+    private void deleteDuplicate() {
+        List<Journal> temp = new ArrayList<>(update);
+        update.clear();
+        update.add(temp.remove(0));
+        Iterator<Journal> iterator = temp.iterator();
+        while (iterator.hasNext()) {
+            Journal j = iterator.next();
+            AtomicBoolean flag = new AtomicBoolean(false);
+            update.forEach(u -> {
+                if (u.getId().equals(j.getId())) {
+                    flag.set(true);
+                    return;
+                }
+            });
+            if (!flag.get()) {
+                update.add(j);
+            }
+            iterator.remove();
+        }
     }
 }

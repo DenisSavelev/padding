@@ -66,14 +66,6 @@ public class File {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        File file = (File) o;
-        return Objects.equals(id, file.id) && Objects.equals(title, file.title) && Objects.equals(hash, file.hash) && Objects.equals(path, file.path) && Objects.equals(item, file.item);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(id, title, hash, path, item);
     }

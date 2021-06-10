@@ -1,8 +1,6 @@
 package com.diplom.padding.entity.app;
 
 import com.diplom.padding.entity.moodle.JournalMoodle;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.List;

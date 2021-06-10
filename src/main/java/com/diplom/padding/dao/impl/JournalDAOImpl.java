@@ -1,6 +1,7 @@
 package com.diplom.padding.dao.impl;
 
 import com.diplom.padding.dao.JournalDAO;
+import com.diplom.padding.entity.app.File;
 import com.diplom.padding.entity.app.Journal;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.*;
@@ -13,11 +14,14 @@ import java.util.*;
 
 @Repository
 public class JournalDAOImpl implements JournalDAO {
+    private final EntityManager manager;
     private final EntityManager entityManager;
     private final JournalRepository repositoryApp;
 
     @Autowired
-    public JournalDAOImpl(@Qualifier("mySQLEntityManager")EntityManager entityManager, JournalRepository repositoryApp) {
+    public JournalDAOImpl(@Qualifier("postgreEntityManager")EntityManager manager,
+                          @Qualifier("mySQLEntityManager")EntityManager entityManager, JournalRepository repositoryApp) {
+        this.manager = manager;
         this.entityManager = entityManager;
         this.repositoryApp = repositoryApp;
     }
@@ -33,14 +37,13 @@ public class JournalDAOImpl implements JournalDAO {
     }
 
     @Override
-    public JournalMoodle getByUserAndFile(Long idUser, Long idFile) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<JournalMoodle> cq = cb.createQuery(JournalMoodle.class);
-        Root<JournalMoodle> root = cq.from(JournalMoodle.class);
-        Root<TaskMoodle> task = cb.createQuery(TaskMoodle.class).from(TaskMoodle.class);
-        //Join<JournalMoodle, TaskMoodle> join = root.join("idTask").on(cb.equal(root.get("idTask"), task.get("id")));
-        cq.where(cb.equal(root.get("user"), idUser));
-        return entityManager.createQuery(cq).getSingleResult();
+    public Journal getByItemFile(Long itemFile) {
+        CriteriaBuilder cb = manager.getCriteriaBuilder();
+        CriteriaQuery<Journal> cq = cb.createQuery(Journal.class);
+        Root<Journal> root = cq.from(Journal.class);
+        Join<Journal, File> join = root.join("files");
+        cq.where(join.get("item").in(itemFile));
+        return manager.createQuery(cq).getSingleResult();
     }
 
     @Override

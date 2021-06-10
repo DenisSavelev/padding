@@ -26,6 +26,18 @@ public class FileDAOImpl implements FileDAO {
     }
 
     @Override
+    public Optional<File> getById(Long id) {
+        return repositoryApp.findById(id);
+    }
+
+    @Override
+    public List<File> deleteById(List<Long> id) {
+        List<File> files = repositoryApp.findAllById(id);
+        repositoryApp.deleteAll(files);
+        return files;
+    }
+
+    @Override
     public List<File> getByItemAndUser(List<Long> idItem, Long idUser) {
         CriteriaBuilder cb = manager.getCriteriaBuilder();
         CriteriaQuery<File> cq = cb.createQuery(File.class);
@@ -37,6 +49,24 @@ public class FileDAOImpl implements FileDAO {
     @Override
     public List<File> saveAll(List<File> files) {
         return repositoryApp.saveAll(files);
+    }
+
+    @Override
+    public List<Long> getIdFiles() {
+        CriteriaBuilder cb = manager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<File> root = cq.from(File.class);
+        cq.select(root.get("id"));
+        return manager.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<Long> getIdFilesMoodle() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<FileMoodle> root = cq.from(FileMoodle.class);
+        cq.select(root.get("id")).where(filter(cb, root));
+        return entityManager.createQuery(cq).getResultList();
     }
 
     @Override

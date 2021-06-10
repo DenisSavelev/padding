@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.*;
-import java.io.File;
 import java.nio.file.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -64,7 +63,9 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
         }
         roleDAO.saveAll(roles);
         updateUser(userDAO.findAll());
-        updateFile(fileDAO.findAll());
+        List<com.diplom.padding.entity.app.File> files = new ArrayList<>();
+        fileDAO.findAll().forEach(file -> files.add(new com.diplom.padding.entity.app.File(file)));
+        fileDAO.saveAll(files);
         updateCourse(courseDAO.findAll());
         updateCompetence(competenceDAO.findAll());
         updateCompetence2(competence2DAO.findAllCompetence2());
@@ -75,15 +76,15 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
 
     @Scheduled(cron = "00 00 05 * * ?")
     private void exportDataForTheDay() {
+        journals = new LinkedList<>();
+        update = new LinkedList<>();
         updateUser(userDAO.findForTheDay());
-        updateFile(fileDAO.findForTheDay());
+        updateFile();
         updateCourse(courseDAO.findForTheDay());
         updateCompetence(competenceDAO.findForTheDay());
         updateCompetence2(competence2DAO.findCompetence2ForTheDay());
         updateCompetence3(competence2DAO.findCompetence3ForTheDay());
         updateTask(taskDAO.findForTheDay());
-        journals = new LinkedList<>();
-        update = new LinkedList<>();
         getJournals(journalDAO.findForTheDay()).forEach(journal -> {
             if (journalDAO.getById(journal.getId()).isPresent()) {
                 update.add(journal);
@@ -125,7 +126,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
     }
 
     private void interactionGit(Queue<Journal> queue) {
-        queue.forEach(journal -> {
+        /*queue.forEach(journal -> {
             if (journal.getTask().getType().equals("assign")) {
                 if (journal.getFiles().size() > 0) {
                     List<File> files = new ArrayList<>();
@@ -157,7 +158,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                     }
                 }
             }
-        });
+        });*/
     }
 
     private String parse(String description) {
@@ -184,10 +185,32 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
         userDAO.saveAll(users);
     }
 
-    private void updateFile(List<FileMoodle> fileMoodles) {
+    private void updateFile() {
         List<com.diplom.padding.entity.app.File> files = new ArrayList<>();
-        fileMoodles.forEach(file -> files.add(new com.diplom.padding.entity.app.File(file)));
+        fileDAO.findForTheDay().forEach(file -> {
+            files.add(new com.diplom.padding.entity.app.File(file));
+            fileDAO.getById(file.getId()).ifPresent(file1 -> {
+                Journal journal = journalDAO.getByItemFile(file.getIdItem());
+                List<com.diplom.padding.entity.app.File> temp = journal.getFiles();
+                temp.add(files.get(files.size() - 1));
+                update.add(journal);
+            });
+        });
         fileDAO.saveAll(files);
+        clearOldFile();
+    }
+
+    private void clearOldFile() {
+        List<Long> file = fileDAO.getIdFiles();
+        file.removeAll(fileDAO.getIdFilesMoodle());
+        if (file.size() > 0) {
+            List<File> files = fileDAO.deleteById(file);
+            update.forEach(journal -> {
+                List<File> f = journal.getFiles();
+                f.removeAll(files);
+                journal.setFiles(f);
+            });
+        }
     }
 
     private void updateCourse(List<CourseMoodle> courseMoodles) {

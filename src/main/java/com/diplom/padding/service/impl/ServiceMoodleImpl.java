@@ -139,6 +139,10 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                     try {
                         deleteDirectory();
                         git.gitClone(new GitModel(journal, origName, files));
+                        if (journal.getRating() / journal.getTask().getMaxRating() >= 0.5) {
+                            deleteDirectory();
+                            git.gitMerge(new GitModel(journal, null, null));
+                        }
                     } catch (GitAPIException | URISyntaxException | IOException e) {
                         e.printStackTrace();
                     }

@@ -1,11 +1,10 @@
 package com.diplom.padding.dao.impl;
 
+import com.diplom.padding.entity.app.*;
 import com.diplom.padding.dao.JournalDAO;
-import com.diplom.padding.entity.app.File;
-import com.diplom.padding.entity.app.Journal;
+import com.diplom.padding.entity.moodle.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.*;
-import com.diplom.padding.entity.moodle.*;
 import com.diplom.padding.repositories.app.JournalRepository;
 
 import javax.persistence.*;
@@ -24,6 +23,11 @@ public class JournalDAOImpl implements JournalDAO {
         this.manager = manager;
         this.entityManager = entityManager;
         this.repositoryApp = repositoryApp;
+    }
+
+    @Override
+    public Journal save(Journal journal) {
+        return repositoryApp.save(journal);
     }
 
     @Override

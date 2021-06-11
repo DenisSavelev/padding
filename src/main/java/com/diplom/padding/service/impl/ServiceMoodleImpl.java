@@ -93,40 +93,11 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                 journals.add(journal);
             }
         });
-        journalDAO.saveAll(journals);
-        deleteDuplicate();
-        update = new LinkedList<>(journalDAO.saveAll(update));
+        updateFile();
         new Thread(new ServiceMoodleImpl(git, roleDAO, userDAO, taskDAO, fileDAO, courseDAO, journalDAO, competenceDAO,
                 competence2DAO, courseTaskMoodleDAO, courseTaskCompetenceMoodleDAO)).start();
-        update.forEach(journal -> {
-            if (journal.getTask().getType().equals("assign")) {
-                if (journal.getFiles().size() > 0) {
-                    List<java.io.File> files = new ArrayList<>();
-                    List<String> origName = new ArrayList<>();
-                    journal.getFiles().forEach(file -> {
-                        String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
-                        origName.add(file.getTitle());
-                        files.add(new java.io.File(path));
-                    });
-                    try {
-                        deleteDirectory();
-                        git.updateBranch(new GitModel(journal, origName, files));
-                        if (journal.getRating() / journal.getTask().getMaxRating() >= 0.5) {
-                            deleteDirectory();
-                            git.gitMerge(new GitModel(journal, null, null));
-                        }
-                    } catch (GitAPIException | URISyntaxException | IOException e) {
-                            e.printStackTrace();
-                        }
-                }
-            }
-        });
-        update.clear();
-    }
-
-    @Override
-    public void run() {
-        journals.forEach(journal -> {
+        while (!update.isEmpty()) {
+            Journal journal = journals.poll();
             if (journal.getTask().getType().equals("assign")) {
                 if (journal.getFiles().size() > 0) {
                     List<java.io.File> files = new ArrayList<>();
@@ -148,8 +119,37 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                     }
                 }
             }
-        });
-        journals.clear();
+            journalDAO.save(journal);
+        }
+    }
+
+    @Override
+    public void run() {
+        while (!journals.isEmpty()) {
+            Journal journal = journals.poll();
+            if (journal.getTask().getType().equals("assign")) {
+                if (journal.getFiles().size() > 0) {
+                    List<java.io.File> files = new ArrayList<>();
+                    List<String> origName = new ArrayList<>();
+                    journal.getFiles().forEach(file -> {
+                        String path = "/var/www/moodledata/filedir/" + file.getPath() + "/" + file.getHash();
+                        origName.add(file.getTitle());
+                        files.add(new java.io.File(path));
+                    });
+                    try {
+                        deleteDirectory();
+                        git.gitClone(new GitModel(journal, origName, files));
+                        if (journal.getRating() / journal.getTask().getMaxRating() >= 0.5) {
+                            deleteDirectory();
+                            git.gitMerge(new GitModel(journal, null, null));
+                        }
+                    } catch (GitAPIException | URISyntaxException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            journalDAO.save(journal);
+        }
     }
 
     public static void deleteDirectory() throws IOException {
@@ -205,7 +205,17 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                 if (!temp.contains(file1)) {
                     temp.add(file1);
                 }
-                update.add(journal);
+                AtomicBoolean f = new AtomicBoolean(true);
+                update.forEach(journal1 -> {
+                    if (journal1.getId().equals(journal.getId())) {
+                        journal1.setFiles(journal.getFiles());
+                        f.set(false);
+                        return;
+                    }
+                });
+                if (f.get()) {
+                    update.add(journal);
+                }
             });
         });
         fileDAO.saveAll(files);
@@ -276,26 +286,5 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
                         competence2DAO.getCompetence3ById(id).ifPresent(competence3s::add);
                         tasks.add(new Task(taskMoodle, competence2s, competence3s));});}));
         taskDAO.saveAll(tasks);
-    }
-
-    private void deleteDuplicate() {
-        List<Journal> temp = new ArrayList<>(update);
-        update.clear();
-        update.add(temp.remove(0));
-        Iterator<Journal> iterator = temp.iterator();
-        while (iterator.hasNext()) {
-            Journal j = iterator.next();
-            AtomicBoolean flag = new AtomicBoolean(false);
-            update.forEach(u -> {
-                if (u.getId().equals(j.getId())) {
-                    flag.set(true);
-                    return;
-                }
-            });
-            if (!flag.get()) {
-                update.add(j);
-            }
-            iterator.remove();
-        }
     }
 }

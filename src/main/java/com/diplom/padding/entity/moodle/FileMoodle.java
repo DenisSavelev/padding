@@ -13,8 +13,9 @@ public class FileMoodle {
     private String name;
     @Column(name = "itemid")
     private Long idItem;
-    @Column(name = "userid")
-    private Long idUser;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userid")
+    private UserMoodle user;
     @Column(name = "component")
     private String component;
     @Column(name = "author")
@@ -34,7 +35,11 @@ public class FileMoodle {
         return name;
     }
 
-    public Long getIdUser() {
-        return idUser;
+    public Long getIdItem() {
+        return idItem;
+    }
+
+    public UserMoodle getUser() {
+        return user;
     }
 }

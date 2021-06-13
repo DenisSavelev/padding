@@ -11,8 +11,9 @@ public class CompetenceMoodle2 {
     private String shortname;
     @Column(columnDefinition = "description")
     private String description;
-    @Column(name = "competencyframeworkid")
-    private Long idCompetence;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="competencyframeworkid")
+    private CompetenceMoodle competence;
     @Column(name = "parentid")
     private Long idParent;
     @Column(name = "timemodified")
@@ -34,8 +35,8 @@ public class CompetenceMoodle2 {
         return description;
     }
 
-    public Long getIdCompetence() {
-        return idCompetence;
+    public CompetenceMoodle getCompetence() {
+        return competence;
     }
 
     public Long getIdParent() {

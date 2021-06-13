@@ -80,7 +80,6 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
         journals = new LinkedList<>();
         update = new LinkedList<>();
         updateUser(userDAO.findForTheDay());
-        updateFile();
         updateCourse(courseDAO.findForTheDay());
         updateCompetence(competenceDAO.findForTheDay());
         updateCompetence2(competence2DAO.findCompetence2ForTheDay());
@@ -97,7 +96,7 @@ public class ServiceMoodleImpl extends Thread implements ServiceMoodle {
         new Thread(new ServiceMoodleImpl(git, roleDAO, userDAO, taskDAO, fileDAO, courseDAO, journalDAO, competenceDAO,
                 competence2DAO, courseTaskMoodleDAO, courseTaskCompetenceMoodleDAO)).start();
         while (!update.isEmpty()) {
-            Journal journal = journals.poll();
+            Journal journal = update.poll();
             if (journal.getTask().getType().equals("assign")) {
                 if (journal.getFiles().size() > 0) {
                     List<java.io.File> files = new ArrayList<>();

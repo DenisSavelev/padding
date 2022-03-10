@@ -34,7 +34,7 @@ public class MySQLConfiguration {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost:3306/moodle?serverTimezone=UTC&useSSL=true&verifyServerCertificate=false");
-        dataSource.setUsername("root");
+        dataSource.setUsername("mysql");
         dataSource.setPassword("qwerty123");
         return dataSource;
     }
